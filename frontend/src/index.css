@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --color-navy: #012854;
+  --color-navy-dark: #011d40;
+  --color-gold: #ffde59;
+  --color-accent: #faa500;
+  --color-accent-alt: #edb501;
+  --color-text: #233258;
+  --color-muted: #6b768f;
+  --color-surface: #f5f6f8;
+  --color-border: #d7dbe4;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    @apply antialiased text-text font-sans;
+    background: #eef0f4;
+  }
+}
+
+@layer utilities {
+  .grid-navy {
+    background-color: #012854;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .grid-gold {
+    background-color: #012854;
+    background-image:
+      linear-gradient(rgba(255, 222, 89, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 222, 89, 0.07) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .grid-sidebar {
+    background-color: #011d40;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 38px 38px;
+  }
+
+  .accent-gradient {
+    background: linear-gradient(135deg, #faa500 0%, #edb501 100%);
+  }
+
+  .text-accent-gradient {
+    background: linear-gradient(135deg, #faa500 0%, #edb501 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}

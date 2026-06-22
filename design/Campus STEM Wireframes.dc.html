@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #eef0f4; font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; color:#233258; }
+  .grid-navy { background-color:#012854; background-image:linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px); background-size:40px 40px; }
+  .grid-gold { background-color:#012854; background-image:linear-gradient(rgba(255,222,89,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,222,89,.07) 1px, transparent 1px); background-size:40px 40px; }
+  .ph-dark { background-color: rgba(255,255,255,.03); background-image: linear-gradient(45deg, transparent calc(50% - 1px), rgba(255,255,255,.12), transparent calc(50% + 1px)), linear-gradient(-45deg, transparent calc(50% - 1px), rgba(255,255,255,.12), transparent calc(50% + 1px)); border: 1px dashed rgba(255,222,89,.35); }
+  .scrollarea::-webkit-scrollbar { width: 10px; height: 10px; }
+  .scrollarea::-webkit-scrollbar-thumb { background: #c2c9d8; border-radius: 6px; }
+</style>
+</helmet>
+
+<div id="app" style="{{ appStyle }}">
+
+  <!-- ===== Prototype navigator (meta chrome) ===== -->
+  <div style="position:sticky; top:0; z-index:50; background:#011d40; color:#cdd6e8; display:flex; align-items:center; gap:16px; padding:9px 18px; flex-wrap:wrap; border-bottom:1px solid rgba(255,222,89,.18);">
+    <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1px; color:#7e8db0;">// PROTOTIPO</span>
+    <div style="margin-left:auto; display:flex; gap:6px;">
+      <button onClick="{{ goLanding }}" style="{{ tabLanding }}">LANDING</button>
+      <button onClick="{{ goRegistro }}" style="{{ tabRegistro }}">REGISTRO</button>
+      <button onClick="{{ goDashboard }}" style="{{ tabDashboard }}">DASHBOARD</button>
+    </div>
+  </div>
+
+  <!-- ============================== VISTA 1 — LANDING ============================== -->
+  <sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
+  <div data-screen-label="Vista 1 — Landing" class="scrollarea" style="flex:1; overflow:auto; background:#011d40;">
+
+      <!-- Header -->
+      <div style="position:sticky; top:0; z-index:10; background:rgba(1,29,64,.82); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,.08); display:flex; align-items:center; gap:20px; padding:16px 34px;">
+        <div style="display:flex; align-items:baseline; gap:10px;">
+          <span style="font-family:'Space Grotesk',sans-serif; font-weight:700; color:#fff; font-size:19px; letter-spacing:-.5px;">CAMPUS<span style="color:#ffde59;">STEM</span></span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:1px; color:#6f80a6;">IEEE · UNINORTE</span>
+        </div>
+        <div style="margin-left:auto; display:flex; align-items:center; gap:26px;">
+          <span style="font-family:'IBM Plex Mono',monospace; color:#aab6d2; font-size:12px; letter-spacing:.5px; cursor:pointer;">INFO</span>
+          <span style="font-family:'IBM Plex Mono',monospace; color:#aab6d2; font-size:12px; letter-spacing:.5px; cursor:pointer;">CALENDARIO</span>
+          <span style="font-family:'IBM Plex Mono',monospace; color:#fff; font-size:12px; letter-spacing:.5px; cursor:pointer;">INGRESAR</span>
+          <button onClick="{{ goRegistro }}" style="background:var(--accent,linear-gradient(135deg,#faa500,#edb501)); color:#012854; border:none; font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; letter-spacing:.5px; padding:11px 18px; border-radius:var(--rs,6px); cursor:pointer;">REGISTRARSE →</button>
+        </div>
+      </div>
+
+      <!-- Hero -->
+      <div class="grid-gold" style="position:relative; overflow:hidden;">
+        <div style="position:absolute; top:-160px; right:-120px; width:620px; height:620px; background:radial-gradient(circle, rgba(250,165,0,.22), transparent 66%); pointer-events:none;"></div>
+        <div style="position:relative; max-width:1180px; margin:0 auto; padding:30px 34px 84px;">
+
+          <!-- top coordinate row -->
+          <div style="display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1px; color:#6f80a6; border-bottom:1px solid rgba(255,255,255,.1); padding-bottom:14px; margin-bottom:54px;">
+            <span>BARRANQUILLA · COLOMBIA</span>
+            <span>10°59′N · 74°47′W</span>
+          </div>
+
+          <div style="display:flex; gap:56px; align-items:flex-end; flex-wrap:wrap;">
+            <div style="flex:1; min-width:320px;">
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:2px; color:#ffde59; margin-bottom:22px;">EVENTO · 30 JUN — 03 JUL · 2026</div>
+              
+              <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:clamp(56px,9.5vw,118px); line-height:.9; letter-spacing:-3px; color:#fff;">CAMPUS</div><div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:clamp(56px,9.5vw,118px); line-height:.9; letter-spacing:-3px; background:var(--accent,linear-gradient(135deg,#faa500,#edb501)); -webkit-background-clip:text; background-clip:text; color:transparent;">STEM.</div>
+              <div style="font-size:18px; line-height:1.6; color:#aab6d2; max-width:440px; margin:30px 0 36px;">Cuatro días de talleres, charlas y un hackathon en ciencia, tecnología, ingeniería y matemáticas para estudiantes de Barranquilla.</div>
+              <div style="display:flex; gap:14px; flex-wrap:wrap;">
+                <button onClick="{{ goRegistro }}" style="background:var(--accent,linear-gradient(135deg,#faa500,#edb501)); color:#012854; border:none; font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600; letter-spacing:.5px; padding:17px 32px; border-radius:var(--rs,6px); cursor:pointer;">REGISTRARME →</button>
+                <button style="background:transparent; color:#fff; border:1px solid rgba(255,255,255,.25); font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:.5px; padding:17px 28px; border-radius:var(--rs,6px); cursor:pointer;">VER CALENDARIO</button>
+              </div>
+            </div>
+
+            <!-- ficha técnica -->
+            <div style="flex:0 1 380px; min-width:300px; border:1px solid rgba(255,222,89,.35); border-radius:var(--r,8px); background:rgba(255,255,255,.02);">
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.5px; color:#ffde59; padding:14px 20px; border-bottom:1px solid rgba(255,222,89,.25);">// FICHA TÉCNICA</div>
+              <div style="padding:6px 20px 16px;">
+                <sc-for list="{{ specs }}" as="sp" hint-placeholder-count="4">
+                  <div style="display:flex; justify-content:space-between; gap:16px; padding:13px 0; border-bottom:1px dashed rgba(255,255,255,.12);">
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1px; color:#6f80a6;">{{ sp.k }}</span>
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#dce4f3; text-align:right;">{{ sp.v }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats band (amarillo a sangre) -->
+      <div style="background:var(--accent,linear-gradient(135deg,#faa500,#edb501));">
+        <div style="max-width:1180px; margin:0 auto; padding:30px 34px; display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:24px;">
+          <sc-for list="{{ stats }}" as="st" hint-placeholder-count="4">
+            <div>
+              <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:54px; line-height:1; letter-spacing:-2px; color:#012854;">{{ st.n }}</div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:1px; color:#7a5a00; margin-top:6px;">{{ st.l }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- Información (editorial, fondo claro) -->
+      <div style="background:#f5f6f8;">
+        <div style="max-width:1180px; margin:0 auto; padding:88px 34px;">
+          <div style="display:flex; gap:64px; flex-wrap:wrap; margin-bottom:64px;">
+            <div style="flex:0 0 auto; width:280px;">
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:1.5px; color:var(--accent-solid,#faa500); margin-bottom:14px;">[ 00 ] · QUÉ ES</div>
+              <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:clamp(32px,4vw,46px); line-height:1.02; letter-spacing:-1.5px; color:#012854;">Campus STEM</div>
+            </div>
+            <div style="flex:1; min-width:300px; font-size:18px; line-height:1.8; color:#46557a; max-width:640px;">
+              Campus STEM es una actividad dirigida a estudiantes principalmente de 9.°, 10.° y 11.° de instituciones públicas y privadas de Barranquilla, que busca incentivar el interés por carreras en el área de la ciencia, la tecnología, la ingeniería y las matemáticas. A lo largo de 4 días, los estudiantes podrán participar en talleres y charlas de ingeniería eléctrica, electrónica y biomédica, junto con un hackathon en el que practicarán habilidades técnicas y blandas. También habrá actividades de esparcimiento y de rompehielo.
+            </div>
+          </div>
+
+          <!-- pilares como lista numerada -->
+          <div style="border-top:1px solid #d8dce6;">
+            <sc-for list="{{ infoCards }}" as="card" hint-placeholder-count="3">
+              <div style="display:flex; gap:32px; align-items:baseline; padding:30px 0; border-bottom:1px solid #d8dce6;">
+                <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:46px; line-height:1; letter-spacing:-2px; color:var(--accent-solid,#faa500); flex:0 0 auto; width:90px;">{{ card.num }}</div>
+                <div style="flex:0 0 auto; width:200px; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:24px; color:#012854;">{{ card.title }}</div>
+                <div style="flex:1; min-width:240px; font-size:16px; line-height:1.6; color:#6b768f;">{{ card.desc }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendario (navy + grid) -->
+      <div class="grid-navy" style="position:relative;">
+        <div style="position:relative; max-width:1180px; margin:0 auto; padding:84px 34px;">
+          <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:44px;">
+            <div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:1.5px; color:#ffde59; margin-bottom:12px;">[ 01 ] · AGENDA</div>
+              <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:clamp(32px,4vw,46px); letter-spacing:-1.5px; color:#fff;">Calendario</div>
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#6f80a6; letter-spacing:.5px;">4 DÍAS · 30 JUN — 03 JUL</div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.12);">
+            <sc-for list="{{ days }}" as="day" hint-placeholder-count="4">
+              <div style="position:relative; overflow:hidden; background:#012854; padding:24px 22px;">
+                <div style="position:absolute; top:-14px; right:8px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:120px; line-height:1; color:rgba(255,255,255,.04);">{{ day.idx }}</div>
+                <div style="position:relative;">
+                  <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; color:#fff; font-size:20px;">{{ day.label }}</div>
+                  <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#ffde59; margin:4px 0 18px;">{{ day.date }}</div>
+                  <sc-for list="{{ day.acts }}" as="act" hint-placeholder-count="3">
+                    <div style="display:flex; gap:12px; padding:11px 0; border-top:1px solid rgba(255,255,255,.08);">
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--accent-solid,#faa500); min-width:42px;">{{ act.time }}</span>
+                      <span style="font-size:14px; color:#cdd6e8;">{{ act.name }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA band (amarillo a sangre) -->
+      <div style="background:var(--accent,linear-gradient(135deg,#faa500,#edb501));">
+        <div style="max-width:1180px; margin:0 auto; padding:64px 34px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap;">
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:clamp(30px,4.5vw,52px); line-height:1.02; letter-spacing:-1.5px; color:#012854;">¿Listo para<br>participar?</div>
+          <button onClick="{{ goRegistro }}" style="background:#012854; color:#fff; border:none; font-family:'IBM Plex Mono',monospace; font-size:15px; font-weight:600; letter-spacing:.5px; padding:20px 38px; border-radius:var(--rs,6px); cursor:pointer;">CREAR CUENTA →</button>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="grid-navy" style="color:#8a98ba;">
+        <div style="max-width:1180px; margin:0 auto; padding:56px 34px; display:flex; gap:40px; flex-wrap:wrap; justify-content:space-between;">
+          <div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; color:#fff; font-size:18px; margin-bottom:12px;">Rama IEEE Uninorte</div>
+            <div style="font-size:14px; line-height:1.7; max-width:260px;">Organizado por la Rama Estudiantil IEEE de la Universidad del Norte, Barranquilla.</div>
+          </div>
+          <div style="display:flex; gap:56px;">
+            <div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1px; color:#5e6f96; margin-bottom:14px;">ENLACES</div>
+              <div style="font-size:14px; margin-bottom:10px;">Información</div>
+              <div style="font-size:14px; margin-bottom:10px;">Calendario</div>
+              <div style="font-size:14px;">Contacto</div>
+            </div>
+            <div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1px; color:#5e6f96; margin-bottom:14px;">REDES</div>
+              <div style="display:flex; gap:10px;">
+                <div style="width:34px; height:34px; border:1px solid rgba(255,222,89,.45); border-radius:50%;"></div>
+                <div style="width:34px; height:34px; border:1px solid rgba(255,222,89,.45); border-radius:50%;"></div>
+                <div style="width:34px; height:34px; border:1px solid rgba(255,222,89,.45); border-radius:50%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  </div>
+  </sc-if>
+
+  <!-- ============================== VISTA 2 — REGISTRO ============================== -->
+  <sc-if value="{{ isRegistro }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="Vista 2 — Registro" class="scrollarea" style="flex:1; overflow:auto; display:flex; min-height:0;">
+
+    <!-- panel lateral navy (oculto en móvil via flex-wrap) -->
+    <div class="grid-gold" style="flex:1; min-width:0; position:relative; overflow:hidden; padding:56px 48px; display:flex; flex-direction:column; justify-content:space-between;">
+      <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; color:#fff; font-size:20px; letter-spacing:-.5px;">CAMPUS<span style="color:#ffde59;">STEM</span></div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:clamp(30px,3.4vw,46px); line-height:1.05; letter-spacing:-1.5px; color:#fff; margin-bottom:18px;">Únete a la<br>edición 2026.</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:1px; color:#ffde59;">30 JUN — 03 JUL · BARRANQUILLA</div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1px; color:#6f80a6;">IEEE · UNINORTE</div>
+    </div>
+
+    <!-- columna formulario -->
+    <div style="flex:0 1 520px; min-width:340px; background:#f5f6f8; padding:48px 40px 70px;">
+      <div style="max-width:420px; margin:0 auto;">
+
+        <div style="display:flex; gap:6px; align-items:center; margin-bottom:30px; flex-wrap:wrap;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:1px; color:#9aa3b8; margin-right:4px;">ESTADO:</span>
+          <button onClick="{{ setRegNormal }}" style="{{ segNormal }}">NORMAL</button>
+          <button onClick="{{ setRegError }}" style="{{ segError }}">ERROR</button>
+          <button onClick="{{ setRegDisabled }}" style="{{ segDisabled }}">OFF</button>
+        </div>
+
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:1.5px; color:var(--accent-solid,#faa500); margin-bottom:10px;">// CREAR CUENTA</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size:34px; font-weight:700; letter-spacing:-1px; color:#012854; margin-bottom:28px;">Registro</div>
+
+        <sc-if value="{{ regDisabled }}" hint-placeholder-val="{{ false }}">
+          <div style="border:1px solid #e2e5ec; border-left:3px solid #edb501; background:#fff; border-radius:var(--rs,6px); padding:30px 26px;">
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1px; color:#c98a00; margin-bottom:12px;">// REGISTRO CERRADO</div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; color:#012854; font-size:19px; margin-bottom:9px;">El registro no está abierto</div>
+            <div style="font-size:14px; color:#6b768f; line-height:1.6;">Vuelve más tarde. El registro se habilita desde el panel de administración.</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ regNormal }}" hint-placeholder-val="{{ true }}">
+          <dc-import name="RegistroForm" with-error="{{ false }}" hint-size="100%,560px"></dc-import>
+        </sc-if>
+        <sc-if value="{{ regError }}" hint-placeholder-val="{{ false }}">
+          <dc-import name="RegistroForm" with-error="{{ true }}" hint-size="100%,580px"></dc-import>
+        </sc-if>
+
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============================== VISTA 3 — DASHBOARD ADMIN ============================== -->
+  <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="Vista 3 — Dashboard" style="flex:1; display:flex; position:relative; overflow:hidden; background:#f5f6f8;">
+
+    <div onClick="{{ toggleSidebar }}" style="{{ backdropStyle }}"></div>
+
+    <!-- Sidebar -->
+    <div style="{{ sidebarStyle }}">
+      <div style="display:flex; align-items:center; gap:11px; padding:4px 8px 18px; border-bottom:1px solid rgba(255,255,255,.1); margin-bottom:16px;">
+        <span style="font-family:'Space Grotesk',sans-serif; color:#fff; font-weight:700; font-size:16px; letter-spacing:-.5px;">CAMPUS<span style="color:#ffde59;">STEM</span></span>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:1px; color:#5e6f96; padding:0 8px 10px;">// NAVEGACIÓN</div>
+      <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="8">
+        <div onClick="{{ item.onClick }}" style="{{ item.style }}">{{ item.label }}</div>
+      </sc-for>
+    </div>
+
+    <!-- Main column -->
+    <div class="scrollarea" style="flex:1; display:flex; flex-direction:column; overflow:auto; min-width:0;">
+
+      <!-- Topbar -->
+      <div style="position:sticky; top:0; z-index:5; background:rgba(255,255,255,.9); backdrop-filter:blur(10px); border-bottom:1px solid #e7eaf1; display:flex; align-items:center; gap:14px; padding:16px 28px;">
+        <sc-if value="{{ showHamburger }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ toggleSidebar }}" style="background:none; border:1px solid #d7dbe4; border-radius:var(--rs,6px); width:38px; height:38px; cursor:pointer; display:flex; flex-direction:column; gap:4px; align-items:center; justify-content:center; padding:0;">
+            <span style="width:16px; height:2px; background:#012854;"></span>
+            <span style="width:16px; height:2px; background:#012854;"></span>
+            <span style="width:16px; height:2px; background:#012854;"></span>
+          </button>
+        </sc-if>
+        <span style="font-family:'Space Grotesk',sans-serif; font-weight:700; color:#012854; font-size:19px; letter-spacing:-.5px;">{{ dashTitle }}</span>
+        <div style="margin-left:auto; display:flex; align-items:center; gap:14px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.5px; color:#012854; border:1px solid #edb501; border-radius:99px; padding:6px 13px;">ADMIN</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#012854; border:1px solid #d7dbe4; border-radius:var(--rs,6px); padding:9px 15px; cursor:pointer;">SALIR</span>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div style="padding:30px 28px 60px; max-width:1020px;">
+
+       <sc-if value="{{ dashInicio }}" hint-placeholder-val="{{ true }}">
+        <!-- KPIs -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:32px;">
+          <sc-for list="{{ kpis }}" as="kpi" hint-placeholder-count="4">
+            <div style="background:#fff; border:1px solid #e3e7ef; border-radius:var(--r,10px); padding:22px;">
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.5px; color:#8a96ad; margin-bottom:14px;">{{ kpi.label }}</div>
+              <div style="display:flex; align-items:baseline; gap:10px;">
+                <div style="width:8px; height:8px; border-radius:2px; background:{{ kpi.accent }};"></div>
+                <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:38px; letter-spacing:-1.5px; color:#012854;">{{ kpi.value }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- Control de fases -->
+        <div style="background:#fff; border:1px solid #e3e7ef; border-radius:var(--r,10px); padding:26px; margin-bottom:32px;">
+          <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:6px;">
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:21px; color:#012854; letter-spacing:-.5px;">Control del evento</div>
+          </div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.5px; color:#9aa3b8; margin-bottom:22px;">// COMPUERTAS INDEPENDIENTES</div>
+
+          <div style="display:flex; align-items:center; gap:16px; padding:16px 0; border-top:1px solid #f1f3f7;">
+            <div style="flex:1;">
+              <div style="font-weight:600; color:#012854; font-size:15px;">Registro de estudiantes</div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#9aa3b8; margin-top:3px;">{{ regText }}</div>
+            </div>
+            <div onClick="{{ toggleReg }}" style="{{ regTrack }}"><div style="{{ regKnob }}"></div></div>
+          </div>
+          <div style="display:flex; align-items:center; gap:16px; padding:16px 0; border-top:1px solid #f1f3f7;">
+            <div style="flex:1;">
+              <div style="font-weight:600; color:#012854; font-size:15px;">Marketplace</div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#9aa3b8; margin-top:3px;">{{ mktText }}</div>
+            </div>
+            <div onClick="{{ toggleMkt }}" style="{{ mktTrack }}"><div style="{{ mktKnob }}"></div></div>
+          </div>
+          <div style="display:flex; align-items:center; gap:16px; padding:16px 0; border-top:1px solid #f1f3f7;">
+            <div style="flex:1;">
+              <div style="font-weight:600; color:#012854; font-size:15px;">Calificación</div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#9aa3b8; margin-top:3px;">{{ calText }}</div>
+            </div>
+            <div onClick="{{ toggleCal }}" style="{{ calTrack }}"><div style="{{ calKnob }}"></div></div>
+          </div>
+        </div>
+
+        <!-- Accesos rápidos -->
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1px; color:#8a96ad; margin-bottom:14px;">// ACCESOS RÁPIDOS</div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <div style="background:var(--accent,linear-gradient(135deg,#faa500,#edb501)); color:#012854; border-radius:var(--rs,6px); padding:14px 20px; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; cursor:pointer;">GENERAR EQUIPOS</div>
+            <div style="border:1px solid #d7dbe4; background:#fff; color:#012854; border-radius:var(--rs,6px); padding:14px 20px; font-family:'IBM Plex Mono',monospace; font-size:13px; cursor:pointer;">AGREGAR PRODUCTO</div>
+            <div style="border:1px solid #d7dbe4; background:#fff; color:#012854; border-radius:var(--rs,6px); padding:14px 20px; font-family:'IBM Plex Mono',monospace; font-size:13px; cursor:pointer;">DESCARGAR RESULTADOS</div>
+          </div>
+        </div>
+       </sc-if>
+
+        <!-- Estudiantes -->
+        <sc-if value="{{ dashEstudiantes }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:center; gap:14px; margin-bottom:18px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:200px; height:44px; border:1px solid #d7dbe4; border-radius:var(--rs,6px); background:#fff; display:flex; align-items:center; gap:10px; padding:0 14px; color:#9aa3b8; font-family:'IBM Plex Mono',monospace; font-size:13px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9aa3b8" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg>
+              BUSCAR…
+            </div>
+            <div style="height:44px; border:1px solid #d7dbe4; border-radius:var(--rs,6px); background:#fff; display:flex; align-items:center; padding:0 16px; color:#3a4868; font-family:'IBM Plex Mono',monospace; font-size:13px;">FILTRAR ▾</div>
+            <div style="height:44px; border:none; border-radius:var(--rs,6px); background:var(--accent,linear-gradient(135deg,#faa500,#edb501)); display:flex; align-items:center; padding:0 18px; color:#012854; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;">EXPORTAR</div>
+          </div>
+          <div style="background:#fff; border:1px solid #e3e7ef; border-radius:var(--r,10px); overflow:hidden;">
+            <div style="display:grid; grid-template-columns:2fr 1.4fr 0.8fr 1.2fr; background:#012854; padding:14px 18px;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.5px; color:#ffde59;">NOMBRE</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.5px; color:#ffde59;">COLEGIO</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.5px; color:#ffde59;">GRADO</span>
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.5px; color:#ffde59;">EQUIPO</span>
+            </div>
+            <sc-for list="{{ students }}" as="s" hint-placeholder-count="6">
+              <div style="display:grid; grid-template-columns:2fr 1.4fr 0.8fr 1.2fr; padding:15px 18px; border-top:1px solid #f1f3f7; align-items:center;">
+                <span style="font-size:14px; color:#012854; font-weight:600;">{{ s.name }}</span>
+                <span style="font-size:14px; color:#6b768f;">{{ s.colegio }}</span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#6b768f;">{{ s.grado }}</span>
+                <span style="font-size:14px; color:#6b768f;">{{ s.equipo }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- Equipos -->
+        <sc-if value="{{ dashEquipos }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:center; justify-content:flex-end; margin-bottom:18px;">
+            <div style="border:none; border-radius:var(--rs,6px); background:var(--accent,linear-gradient(135deg,#faa500,#edb501)); display:flex; align-items:center; padding:13px 20px; color:#012854; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; cursor:pointer;">GENERAR EQUIPOS</div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px;">
+            <sc-for list="{{ teams }}" as="t" hint-placeholder-count="4">
+              <div style="background:#fff; border:1px solid #e3e7ef; border-radius:var(--r,10px); padding:22px;">
+                <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px;">
+                  <span style="font-family:'Space Grotesk',sans-serif; font-weight:700; color:#012854; font-size:18px;">{{ t.name }}</span>
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#8a96ad;">{{ t.members }} MIEMBROS</span>
+                </div>
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#9aa3b8; margin-bottom:14px;">{{ t.colegio }}</div>
+                <div style="display:flex; gap:6px;">
+                  <div style="width:30px; height:30px; border-radius:50%; background:#eef0f4;"></div>
+                  <div style="width:30px; height:30px; border-radius:50%; background:#eef0f4;"></div>
+                  <div style="width:30px; height:30px; border-radius:50%; background:#eef0f4;"></div>
+                  <div style="width:30px; height:30px; border-radius:50%; background:#eef0f4;"></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;gradientes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;acento&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Naranja&quot;,&quot;Dorado&quot;,&quot;Cálido&quot;],&quot;default&quot;:&quot;Naranja&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;radio&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Recto&quot;,&quot;Suave&quot;,&quot;Marcado&quot;],&quot;default&quot;:&quot;Recto&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = {
+    view: 'landing',
+    regState: 'normal',
+    registroOpen: true,
+    marketplaceOpen: false,
+    calificacionOpen: false,
+    sidebarOpen: false,
+    isNarrow: false,
+    dashSection: 'inicio',
+  };
+
+  componentDidMount() {
+    this._onResize = () => {
+      const narrow = window.innerWidth < 860;
+      if (narrow !== this.state.isNarrow) this.setState({ isNarrow: narrow, sidebarOpen: false });
+    };
+    this._onResize();
+    window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); }
+
+  theme() {
+    const grads = this.props.gradientes ?? true;
+    const acento = this.props.acento ?? 'Naranja';
+    const map = {
+      'Naranja': ['#faa500', '#edb501', '#faa500'],
+      'Dorado':  ['#edb501', '#ffde59', '#edb501'],
+      'Cálido':  ['#faa500', '#ffde59', '#faa500'],
+    };
+    const m = map[acento] || map['Naranja'];
+    const accent = grads ? `linear-gradient(135deg, ${m[0]} 0%, ${m[1]} 100%)` : m[2];
+    const accentSolid = m[2];
+    // acción/botones: azul de la paleta (no amarillo)
+    const action = grads ? 'linear-gradient(135deg, #233258 0%, #012854 100%)' : '#012854';
+    const actionSolid = '#012854';
+    const radioMap = { 'Recto': ['6px', '4px'], 'Suave': ['12px', '8px'], 'Marcado': ['18px', '12px'] };
+    const r = radioMap[this.props.radio] || radioMap['Recto'];
+    return { accent, accentSolid, action, actionSolid, rCard: r[0], rSm: r[1] };
+  }
+
+  tab(active) {
+    return {
+      background: active ? '#ffde59' : 'transparent',
+      color: active ? '#012854' : '#8a98ba',
+      border: active ? 'none' : '1px solid rgba(255,255,255,.16)',
+      fontFamily: "'IBM Plex Mono', monospace",
+      fontSize: '11px',
+      letterSpacing: '.5px',
+      fontWeight: active ? 600 : 500,
+      padding: '7px 13px',
+      borderRadius: '5px',
+      cursor: 'pointer',
+    };
+  }
+
+  segTab(active) {
+    return {
+      background: active ? '#012854' : '#fff',
+      color: active ? '#fff' : '#5a6478',
+      border: active ? '1px solid #012854' : '1px solid #d7dbe4',
+      fontFamily: "'IBM Plex Mono', monospace",
+      fontSize: '11px',
+      letterSpacing: '.5px',
+      fontWeight: active ? 600 : 500,
+      padding: '8px 13px',
+      borderRadius: '5px',
+      cursor: 'pointer',
+    };
+  }
+
+  sw(on, t) {
+    return {
+      track: {
+        width: '46px', height: '24px', borderRadius: '14px',
+        background: on ? t.accent : '#cfd5e0',
+        position: 'relative', flex: 'none', cursor: 'pointer',
+        transition: 'background .15s',
+      },
+      knob: {
+        position: 'absolute', top: '2px', left: '2px',
+        width: '20px', height: '20px', borderRadius: '50%', background: '#fff',
+        boxShadow: '0 1px 3px rgba(1,40,84,.35)',
+        transform: on ? 'translateX(22px)' : 'translateX(0)',
+        transition: 'transform .15s',
+      },
+    };
+  }
+
+  navItem(label, key, t) {
+    const active = key && this.state.dashSection === key;
+    return {
+      label,
+      onClick: key ? () => this.setState({ dashSection: key, sidebarOpen: false }) : undefined,
+      style: {
+        fontFamily: "'Space Grotesk', sans-serif",
+        fontSize: '14px',
+        fontWeight: active ? 600 : 500,
+        color: active ? '#012854' : '#aeb8cc',
+        background: active ? t.accent : 'transparent',
+        padding: '11px 14px',
+        borderRadius: t.rSm,
+        marginBottom: '3px',
+        cursor: 'pointer',
+        opacity: key ? 1 : 0.45,
+      },
+    };
+  }
+
+  renderVals() {
+    const v = this.state.view;
+    const t = this.theme();
+    const reg = this.sw(this.state.registroOpen, t);
+    const mkt = this.sw(this.state.marketplaceOpen, t);
+    const cal = this.sw(this.state.calificacionOpen, t);
+    return {
+      appStyle: {
+        minHeight: '100vh', display: 'flex', flexDirection: 'column',
+        '--accent': t.accent, '--accent-solid': t.accentSolid,
+        '--r': t.rCard, '--rs': t.rSm,
+      },
+
+      isLanding: v === 'landing',
+      isRegistro: v === 'registro',
+      isDashboard: v === 'dashboard',
+      tabLanding: this.tab(v === 'landing'),
+      tabRegistro: this.tab(v === 'registro'),
+      tabDashboard: this.tab(v === 'dashboard'),
+      goLanding: () => this.setState({ view: 'landing' }),
+      goRegistro: () => this.setState({ view: 'registro' }),
+      goDashboard: () => this.setState({ view: 'dashboard' }),
+
+      regNormal: this.state.regState === 'normal',
+      regError: this.state.regState === 'error',
+      regDisabled: this.state.regState === 'disabled',
+      setRegNormal: () => this.setState({ regState: 'normal' }),
+      setRegError: () => this.setState({ regState: 'error' }),
+      setRegDisabled: () => this.setState({ regState: 'disabled' }),
+      segNormal: this.segTab(this.state.regState === 'normal'),
+      segError: this.segTab(this.state.regState === 'error'),
+      segDisabled: this.segTab(this.state.regState === 'disabled'),
+
+      regTrack: reg.track, regKnob: reg.knob, regText: this.state.registroOpen ? 'HABILITADO' : 'DESHABILITADO',
+      mktTrack: mkt.track, mktKnob: mkt.knob, mktText: this.state.marketplaceOpen ? 'ABIERTO' : 'CERRADO',
+      calTrack: cal.track, calKnob: cal.knob, calText: this.state.calificacionOpen ? 'ABIERTA' : 'CERRADA',
+      toggleReg: () => this.setState(s => ({ registroOpen: !s.registroOpen })),
+      toggleMkt: () => this.setState(s => ({ marketplaceOpen: !s.marketplaceOpen })),
+      toggleCal: () => this.setState(s => ({ calificacionOpen: !s.calificacionOpen })),
+
+      sidebarOpen: this.state.sidebarOpen,
+      toggleSidebar: () => this.setState(s => ({ sidebarOpen: !s.sidebarOpen })),
+      showHamburger: this.state.isNarrow,
+      sidebarStyle: (() => {
+        const base = {
+          width: '224px', flex: 'none',
+          backgroundColor: '#011d40',
+          backgroundImage: 'linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px)',
+          backgroundSize: '38px 38px',
+          padding: '18px 12px', display: 'flex', flexDirection: 'column',
+        };
+        if (!this.state.isNarrow) return base;
+        return {
+          ...base,
+          position: 'absolute', top: 0, left: 0, bottom: 0, zIndex: 20,
+          boxShadow: '2px 0 18px rgba(1,40,84,.4)',
+          transform: this.state.sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform .2s',
+        };
+      })(),
+      backdropStyle: {
+        display: (this.state.isNarrow && this.state.sidebarOpen) ? 'block' : 'none',
+        position: 'absolute', inset: 0, zIndex: 15, background: 'rgba(1,40,84,.45)',
+      },
+      navItems: [
+        this.navItem('Inicio / Resumen', 'inicio', t),
+        this.navItem('Estudiantes', 'estudiantes', t),
+        this.navItem('Equipos', 'equipos', t),
+        this.navItem('Marketplace', null, t),
+        this.navItem('Presupuestos', null, t),
+        this.navItem('Calificación', null, t),
+        this.navItem('Resultados', null, t),
+        this.navItem('Control del evento', null, t),
+      ],
+      dashInicio: this.state.dashSection === 'inicio',
+      dashEstudiantes: this.state.dashSection === 'estudiantes',
+      dashEquipos: this.state.dashSection === 'equipos',
+      dashTitle: { inicio: 'Inicio / Resumen', estudiantes: 'Estudiantes', equipos: 'Equipos' }[this.state.dashSection],
+
+      specs: [
+        { k: 'DURACIÓN', v: '4 DÍAS' },
+        { k: 'ÁREAS', v: 'ELÉCTRICA · ELECTRÓNICA · BIOMÉDICA' },
+        { k: 'FORMATO', v: 'TALLERES · CHARLAS · HACKATHON' },
+        { k: 'SEDE', v: 'UNINORTE · BARRANQUILLA' },
+      ],
+      stats: [
+        { n: '04', l: 'DÍAS' },
+        { n: '03', l: 'ÁREAS DE INGENIERÍA' },
+        { n: '01', l: 'HACKATHON' },
+        { n: '9–11', l: 'GRADOS' },
+      ],
+      infoCards: [
+        { num: '01', title: 'Talleres', desc: 'Práctica en ingeniería eléctrica, electrónica y biomédica.' },
+        { num: '02', title: 'Charlas', desc: 'Conferencias con profesionales e invitados del área STEM.' },
+        { num: '03', title: 'Hackatón', desc: 'Reto en equipo para aplicar habilidades técnicas y blandas.' },
+      ],
+      days: [
+        { idx: '1', label: 'Día 1', date: '30 JUN', acts: [
+          { time: '09:00', name: 'Apertura' },
+          { time: '10:30', name: 'Taller intro' },
+          { time: '14:00', name: 'Charla invitada' },
+        ]},
+        { idx: '2', label: 'Día 2', date: '01 JUL', acts: [
+          { time: '09:00', name: 'Taller eléctrica' },
+          { time: '11:00', name: 'Taller electrónica' },
+          { time: '15:00', name: 'Rompehielo' },
+        ]},
+        { idx: '3', label: 'Día 3', date: '02 JUL', acts: [
+          { time: '09:00', name: 'Hackatón inicia' },
+          { time: '13:00', name: 'Almuerzo' },
+          { time: '16:00', name: 'Checkpoint' },
+        ]},
+        { idx: '4', label: 'Día 4', date: '03 JUL', acts: [
+          { time: '10:00', name: 'Demos' },
+          { time: '14:00', name: 'Calificación' },
+          { time: '17:00', name: 'Premiación' },
+        ]},
+      ],
+      kpis: [
+        { label: 'ESTUDIANTES', value: '128', accent: t.accentSolid },
+        { label: 'EQUIPOS', value: '32', accent: '#edb501' },
+        { label: 'PRODUCTOS', value: '14', accent: '#ffde59' },
+        { label: 'CALIFICACIÓN', value: '—', accent: '#012854' },
+      ],
+      students: [
+        { name: 'Estudiante 01', colegio: 'Colegio A', grado: '10.°', equipo: 'Equipo 1' },
+        { name: 'Estudiante 02', colegio: 'Colegio B', grado: '11.°', equipo: 'Equipo 1' },
+        { name: 'Estudiante 03', colegio: 'Colegio A', grado: '9.°',  equipo: 'Equipo 2' },
+        { name: 'Estudiante 04', colegio: 'Colegio C', grado: '10.°', equipo: 'Equipo 2' },
+        { name: 'Estudiante 05', colegio: 'Colegio B', grado: '11.°', equipo: '—' },
+        { name: 'Estudiante 06', colegio: 'Colegio D', grado: '10.°', equipo: '—' },
+      ],
+      teams: [
+        { name: 'Equipo 1', members: 4, colegio: 'MIXTO' },
+        { name: 'Equipo 2', members: 4, colegio: 'MIXTO' },
+        { name: 'Equipo 3', members: 3, colegio: 'COLEGIO A' },
+        { name: 'Equipo 4', members: 4, colegio: 'COLEGIO B' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

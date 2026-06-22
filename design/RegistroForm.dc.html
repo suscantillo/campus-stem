@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="border:1px solid #e2e5ec; background:#fff; border-radius:12px; padding:26px 24px;">
+
+  <!-- Nombre completo -->
+  <div style="margin-bottom:16px;">
+    <div style="font-size:13px; color:#3a4868; font-weight:500; margin-bottom:6px;">Nombre completo</div>
+    <div style="height:42px; border:1.5px solid #d7dbe4; border-radius:8px; background:#f7f8fb;"></div>
+  </div>
+
+  <!-- Colegio -->
+  <div style="margin-bottom:16px;">
+    <div style="font-size:13px; color:#3a4868; font-weight:500; margin-bottom:6px;">Colegio</div>
+    <div style="height:42px; border:1.5px solid #d7dbe4; border-radius:8px; background:#f7f8fb;"></div>
+  </div>
+
+  <!-- Grado (select) -->
+  <div style="margin-bottom:16px;">
+    <div style="font-size:13px; color:#3a4868; font-weight:500; margin-bottom:6px;">Grado</div>
+    <div style="height:42px; border:1.5px solid #d7dbe4; border-radius:8px; background:#f7f8fb; display:flex; align-items:center; justify-content:flex-end; padding:0 14px;">
+      <span style="color:#bcbcbc; font-size:11px;">▼</span>
+    </div>
+  </div>
+
+  <!-- Email (campo con posible error) -->
+  <div style="margin-bottom:16px;">
+    <div style="font-size:13px; color:#3a4868; font-weight:500; margin-bottom:6px;">Email</div>
+    <div style="height:42px; border:1.5px solid {{ emailBorder }}; border-radius:7px; background:#fafafa;"></div>
+    <sc-if value="{{ withError }}" hint-placeholder-val="{{ false }}">
+      <div style="font-family:ui-monospace,monospace; font-size:11px; color:#c0392b; margin-top:6px;">⚠ Mensaje de error genérico para este campo.</div>
+    </sc-if>
+  </div>
+
+  <!-- Teléfono -->
+  <div style="margin-bottom:16px;">
+    <div style="font-size:13px; color:#3a4868; font-weight:500; margin-bottom:6px;">Número de teléfono</div>
+    <div style="height:42px; border:1.5px solid #d7dbe4; border-radius:8px; background:#f7f8fb;"></div>
+  </div>
+
+  <!-- Contraseña -->
+  <div style="margin-bottom:16px;">
+    <div style="font-size:13px; color:#3a4868; font-weight:500; margin-bottom:6px;">Contraseña</div>
+    <div style="height:42px; border:1.5px solid #d7dbe4; border-radius:8px; background:#f7f8fb;"></div>
+  </div>
+
+  <!-- Confirmar contraseña -->
+  <div style="margin-bottom:24px;">
+    <div style="font-size:13px; color:#3a4868; font-weight:500; margin-bottom:6px;">Confirmar contraseña</div>
+    <div style="height:42px; border:1.5px solid #d7dbe4; border-radius:8px; background:#f7f8fb;"></div>
+  </div>
+
+  <!-- Botón primario ancho completo -->
+  <button style="width:100%; background:#faa500; color:#012854; border:none; font-size:15px; font-weight:700; padding:14px; border-radius:8px; cursor:pointer;">Registrarme</button>
+
+  <!-- Enlace secundario -->
+  <div style="text-align:center; margin-top:16px; font-size:13px; color:#6b768f;">
+    ¿Ya tienes cuenta? <span style="color:#012854; font-weight:600; text-decoration:underline;">Inicia sesión</span>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:580},&quot;withError&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      withError: !!this.props.withError,
+      emailBorder: this.props.withError ? '#c0392b' : '#d7dbe4',
+    };
+  }
+}
+</script>
+</body>
+</html>
