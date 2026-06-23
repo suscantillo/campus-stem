@@ -15,7 +15,7 @@ export const calendarDays: CalendarDay[] = [
   {
     idx: '1',
     label: 'Día 1',
-    date: '30 JUN',
+    date: '30 jun',
     acts: [
       { time: '09:00', name: 'Apertura' },
       { time: '10:30', name: 'Taller intro' },
@@ -25,7 +25,7 @@ export const calendarDays: CalendarDay[] = [
   {
     idx: '2',
     label: 'Día 2',
-    date: '01 JUL',
+    date: '01 jul',
     acts: [
       { time: '09:00', name: 'Taller eléctrica' },
       { time: '11:00', name: 'Taller electrónica' },
@@ -35,7 +35,7 @@ export const calendarDays: CalendarDay[] = [
   {
     idx: '3',
     label: 'Día 3',
-    date: '02 JUL',
+    date: '02 jul',
     acts: [
       { time: '09:00', name: 'Hackatón inicia' },
       { time: '13:00', name: 'Almuerzo' },
@@ -45,7 +45,7 @@ export const calendarDays: CalendarDay[] = [
   {
     idx: '4',
     label: 'Día 4',
-    date: '03 JUL',
+    date: '03 jul',
     acts: [
       { time: '10:00', name: 'Demos' },
       { time: '14:00', name: 'Calificación' },
@@ -54,33 +54,34 @@ export const calendarDays: CalendarDay[] = [
   },
 ]
 
-export const landingSpecs = [
-  { k: 'DURACIÓN', v: '4 DÍAS' },
-  { k: 'ÁREAS', v: 'ELÉCTRICA · ELECTRÓNICA · BIOMÉDICA' },
-  { k: 'FORMATO', v: 'TALLERES · CHARLAS · HACKATHON' },
-  { k: 'SEDE', v: 'UNINORTE · BARRANQUILLA' },
-]
-
 export const landingStats = [
-  { n: '04', l: 'DÍAS' },
-  { n: '03', l: 'ÁREAS DE INGENIERÍA' },
-  { n: '01', l: 'HACKATHON' },
-  { n: '9–11', l: 'GRADOS' },
+  { n: '4', l: 'días' },
+  { n: '3', l: 'áreas de ingeniería' },
+  { n: '1', l: 'hackathon' },
+  { n: '9–11', l: 'grados' },
 ]
 
-export const infoCards = [
+export type InfoIcon = 'chip' | 'atom' | 'bulb'
+
+export interface InfoCard {
+  icon: InfoIcon
+  title: string
+  desc: string
+}
+
+export const infoCards: InfoCard[] = [
   {
-    num: '01',
+    icon: 'chip',
     title: 'Talleres',
     desc: 'Práctica en ingeniería eléctrica, electrónica y biomédica.',
   },
   {
-    num: '02',
+    icon: 'atom',
     title: 'Charlas',
     desc: 'Conferencias con profesionales e invitados del área STEM.',
   },
   {
-    num: '03',
+    icon: 'bulb',
     title: 'Hackatón',
     desc: 'Reto en equipo para aplicar habilidades técnicas y blandas.',
   },

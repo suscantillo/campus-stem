@@ -17,6 +17,7 @@ from app.core.security import (
 from app.db.models.refresh_tokens import RefreshToken
 from app.db.models.users import RolUsuario, Usuario
 from app.schemas.auth import AuthResponse, LoginRequest, StudentRegisterRequest, TokenResponse, UserResponse
+from app.services.platform_controls_service import PlatformControlsService
 
 
 class AuthService:
@@ -24,6 +25,13 @@ class AuthService:
         self.db = db
 
     async def register_student(self, data: StudentRegisterRequest) -> AuthResponse:
+        controls_service = PlatformControlsService(self.db)
+        if not await controls_service.is_registration_enabled():
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Student registration is currently disabled",
+            )
+
         user = Usuario(
             email=data.email.lower(),
             password_hash=hash_password(data.password),

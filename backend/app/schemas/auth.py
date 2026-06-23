@@ -17,6 +17,13 @@ class StudentRegisterRequest(BaseModel):
     telefono: str
     password: str = Field(min_length=8, max_length=128)
 
+    @field_validator("email", mode="before")
+    @classmethod
+    def normalize_email(cls, value: str) -> str:
+        if isinstance(value, str):
+            return value.strip().rstrip(".")
+        return value
+
     @field_validator("nombre_completo", "colegio")
     @classmethod
     def strip_and_validate_text(cls, value: str) -> str:
@@ -37,6 +44,13 @@ class StudentRegisterRequest(BaseModel):
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str = Field(min_length=1, max_length=128)
+
+    @field_validator("email", mode="before")
+    @classmethod
+    def normalize_email(cls, value: str) -> str:
+        if isinstance(value, str):
+            return value.strip().rstrip(".")
+        return value
 
 
 class RefreshRequest(BaseModel):

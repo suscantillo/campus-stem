@@ -1,18 +1,26 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Quicksand', 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
   --color-navy: #012854;
   --color-navy-dark: #011d40;
-  --color-gold: #ffde59;
-  --color-accent: #faa500;
-  --color-accent-alt: #edb501;
+
+  --color-accent: #2f6be0;
+  --color-accent-dark: #1e50b5;
+  --color-accent-light: #5aa9e6;
+  --color-sky: #3fa0e8;
+
+  /* Legacy aliases kept (now blue) so any stray references degrade gracefully */
+  --color-gold: #5aa9e6;
+  --color-accent-alt: #5aa9e6;
+
   --color-text: #233258;
   --color-muted: #6b768f;
-  --color-surface: #f5f6f8;
-  --color-border: #d7dbe4;
+  --color-surface: #f4f8fd;
+  --color-border: #d7e3f3;
 }
 
 @layer base {
@@ -24,7 +32,7 @@
 
   body {
     @apply antialiased text-text font-sans;
-    background: #eef0f4;
+    background: #eaf1fb;
   }
 }
 
@@ -32,17 +40,17 @@
   .grid-navy {
     background-color: #012854;
     background-image:
-      linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
-    background-size: 40px 40px;
+      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 42px 42px;
   }
 
   .grid-gold {
     background-color: #012854;
     background-image:
-      linear-gradient(rgba(255, 222, 89, 0.07) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 222, 89, 0.07) 1px, transparent 1px);
-    background-size: 40px 40px;
+      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 42px 42px;
   }
 
   .grid-sidebar {
@@ -54,13 +62,23 @@
   }
 
   .accent-gradient {
-    background: linear-gradient(135deg, #faa500 0%, #edb501 100%);
+    background: linear-gradient(135deg, #2f6be0 0%, #1e50b5 100%);
   }
 
   .text-accent-gradient {
-    background: linear-gradient(135deg, #faa500 0%, #edb501 100%);
+    background: linear-gradient(135deg, #5aa9e6 0%, #2f6be0 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+
+  .scrollarea::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  .scrollarea::-webkit-scrollbar-thumb {
+    background: #b8c8e4;
+    border-radius: 6px;
   }
 }

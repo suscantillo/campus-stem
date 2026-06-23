@@ -2,12 +2,16 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { LogoLink } from '../../components/Logo'
 import { useAdmin } from '../../context/AdminContext'
+import { useAuth } from '../../context/AuthContext'
+import { isAdminRole, isSuperAdmin } from '../../lib/auth'
 
-const navItems = [
+const baseNavItems = [
   { to: '/admin', label: 'Inicio / Resumen', end: true },
   { to: '/admin/estudiantes', label: 'Estudiantes', end: false },
   { to: '/admin/equipos', label: 'Equipos', end: false },
 ]
+
+const superAdminNavItems = [{ to: '/admin/usuarios', label: 'Usuarios', end: false }]
 
 const disabledNav = [
   'Marketplace',
@@ -21,10 +25,12 @@ const titles: Record<string, string> = {
   '/admin': 'Inicio / Resumen',
   '/admin/estudiantes': 'Estudiantes',
   '/admin/equipos': 'Equipos',
+  '/admin/usuarios': 'Usuarios privilegiados',
 }
 
 export function AdminLayout() {
   const navigate = useNavigate()
+  const { user, logout } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isNarrow, setIsNarrow] = useState(false)
 
@@ -41,6 +47,17 @@ export function AdminLayout() {
 
   const { pathname } = useLocation()
   const title = titles[pathname] ?? 'Admin'
+  const roleLabel =
+    user && isAdminRole(user.rol) ? user.rol.toUpperCase().replaceAll('_', ' ') : 'ADMIN'
+
+  async function handleLogout() {
+    await logout()
+    navigate('/login')
+  }
+
+  const navItems = user && isSuperAdmin(user.rol)
+    ? [...baseNavItems, ...superAdminNavItems]
+    : baseNavItems
 
   return (
     <div className="relative flex min-h-screen overflow-hidden bg-surface">
@@ -63,10 +80,10 @@ export function AdminLayout() {
         }`}
       >
         <div className="mb-4 border-b border-white/10 px-2 pb-4">
-          <LogoLink to="/" size="sm" />
+          <LogoLink to="/" height={28} onDark />
         </div>
-        <p className="mb-2.5 px-2 font-mono text-[10px] tracking-wide text-[#5e6f96]">
-          // NAVEGACIÓN
+        <p className="mb-2.5 px-2 font-mono text-[10px] tracking-[1px] text-[#5e6f96]">
+          NAVEGACIÓN
         </p>
         {navItems.map((item) => (
           <NavLink
@@ -75,10 +92,10 @@ export function AdminLayout() {
             end={item.end}
             onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
-              `mb-0.5 rounded-md px-3.5 py-2.5 text-sm font-medium transition-colors ${
+              `mb-0.5 rounded-xl px-3.5 py-2.5 font-display text-sm transition-colors ${
                 isActive
-                  ? 'accent-gradient font-semibold text-navy'
-                  : 'text-[#aeb8cc] hover:text-white'
+                  ? 'accent-gradient font-bold text-white'
+                  : 'font-semibold text-[#aebfdc] hover:text-white'
               }`
             }
           >
@@ -88,7 +105,7 @@ export function AdminLayout() {
         {disabledNav.map((label) => (
           <div
             key={label}
-            className="mb-0.5 cursor-not-allowed rounded-md px-3.5 py-2.5 text-sm font-medium text-[#aeb8cc] opacity-45"
+            className="mb-0.5 cursor-not-allowed rounded-xl px-3.5 py-2.5 font-display text-sm font-semibold text-[#aebfdc] opacity-45"
           >
             {label}
           </div>
@@ -109,17 +126,17 @@ export function AdminLayout() {
               <span className="h-0.5 w-4 bg-navy" />
             </button>
           )}
-          <h1 className="text-[19px] font-bold tracking-tight text-navy">{title}</h1>
+          <h1 className="font-display text-xl font-bold tracking-[-0.3px] text-navy">{title}</h1>
           <div className="ml-auto flex items-center gap-3.5">
-            <span className="rounded-full border border-accent-alt px-3 py-1.5 font-mono text-[11px] tracking-wide text-navy">
-              ADMIN
+            <span className="rounded-full border border-[#c7daf5] bg-[#eef4fd] px-3.5 py-1.5 font-display text-xs font-semibold text-accent">
+              {roleLabel}
             </span>
             <button
               type="button"
-              onClick={() => navigate('/')}
-              className="cursor-pointer rounded-md border border-border px-4 py-2 font-mono text-xs text-navy"
+              onClick={handleLogout}
+              className="cursor-pointer rounded-xl border border-border px-4 py-2 font-display text-[13px] font-semibold text-navy transition-colors hover:bg-[#f1f5fb]"
             >
-              SALIR
+              Salir
             </button>
           </div>
         </header>
@@ -137,30 +154,37 @@ export function AdminHomePage() {
   const navigate = useNavigate()
 
   const kpis = [
-    { label: 'ESTUDIANTES', value: String(admin.studentCount), accent: '#faa500' },
-    { label: 'EQUIPOS', value: String(admin.teamCount), accent: '#edb501' },
-    { label: 'PRODUCTOS', value: String(admin.productCount), accent: '#ffde59' },
-    { label: 'CALIFICACIÓN', value: '—', accent: '#012854' },
+    { label: 'Estudiantes', value: String(admin.studentCount), accent: '#2f6be0' },
+    { label: 'Equipos', value: String(admin.teamCount), accent: '#3fa0e8' },
+    { label: 'Productos', value: String(admin.productCount), accent: '#5aa9e6' },
+    { label: 'Calificación', value: '—', accent: '#012854' },
   ]
 
   const gates = [
     {
       title: 'Registro de estudiantes',
-      status: admin.registroOpen ? 'HABILITADO' : 'DESHABILITADO',
+      status: admin.registroLoading
+        ? 'Cargando…'
+        : admin.registroOpen
+          ? 'Habilitado'
+          : 'Deshabilitado',
       checked: admin.registroOpen,
-      toggle: admin.toggleRegistro,
+      toggle: () => void admin.toggleRegistro(),
+      disabled: admin.registroLoading || admin.registroToggling,
     },
     {
       title: 'Marketplace',
-      status: admin.marketplaceOpen ? 'ABIERTO' : 'CERRADO',
+      status: admin.marketplaceOpen ? 'Abierto' : 'Cerrado',
       checked: admin.marketplaceOpen,
       toggle: admin.toggleMarketplace,
+      disabled: true,
     },
     {
       title: 'Calificación',
-      status: admin.calificacionOpen ? 'ABIERTA' : 'CERRADA',
+      status: admin.calificacionOpen ? 'Abierta' : 'Cerrada',
       checked: admin.calificacionOpen,
       toggle: admin.toggleCalificacion,
+      disabled: true,
     },
   ]
 
@@ -168,16 +192,16 @@ export function AdminHomePage() {
     <>
       <div className="mb-8 grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
         {kpis.map((kpi) => (
-          <div key={kpi.label} className="rounded-[10px] border border-[#e3e7ef] bg-white p-5">
-            <p className="mb-3.5 font-mono text-[11px] tracking-wide text-[#8a96ad]">
+          <div
+            key={kpi.label}
+            className="rounded-2xl border border-[#e3ecf7] bg-white p-5 shadow-[0_1px_2px_rgba(1,40,84,0.04),0_14px_32px_-26px_rgba(1,40,84,0.3)]"
+          >
+            <p className="mb-3.5 font-display text-[13px] font-semibold text-[#8a96ad]">
               {kpi.label}
             </p>
             <div className="flex items-baseline gap-2.5">
-              <span
-                className="h-2 w-2 rounded-sm"
-                style={{ background: kpi.accent }}
-              />
-              <span className="text-[38px] leading-none font-bold tracking-tight text-navy">
+              <span className="h-2.5 w-2.5 rounded-[3px]" style={{ background: kpi.accent }} />
+              <span className="font-display text-[38px] leading-none font-bold tracking-[-1px] text-navy">
                 {kpi.value}
               </span>
             </div>
@@ -185,18 +209,25 @@ export function AdminHomePage() {
         ))}
       </div>
 
-      <div className="mb-8 rounded-[10px] border border-[#e3e7ef] bg-white p-6">
-        <h2 className="text-[21px] font-bold tracking-tight text-navy">Control del evento</h2>
-        <p className="mt-1 mb-5 font-mono text-[11px] tracking-wide text-[#9aa3b8]">
-          // COMPUERTAS INDEPENDIENTES
+      <div className="mb-8 rounded-2xl border border-[#e3ecf7] bg-white p-6 shadow-[0_1px_2px_rgba(1,40,84,0.04),0_18px_40px_-30px_rgba(1,40,84,0.35)]">
+        <h2 className="font-display text-[22px] font-bold tracking-[-0.3px] text-navy">
+          Control del evento
+        </h2>
+        <p className="mt-1 mb-5 font-display text-[13px] font-medium text-[#9aa3b8]">
+          Compuertas independientes — no es un flujo lineal
         </p>
+        {admin.registroError ? (
+          <p className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {admin.registroError}
+          </p>
+        ) : null}
         {gates.map((gate) => (
           <div
             key={gate.title}
-            className="flex items-center gap-4 border-t border-[#f1f3f7] py-4"
+            className="flex items-center gap-4 border-t border-[#eef2f8] py-4"
           >
             <div className="flex-1">
-              <p className="text-[15px] font-semibold text-navy">{gate.title}</p>
+              <p className="font-display text-base font-semibold text-navy">{gate.title}</p>
               <p className="mt-0.5 font-mono text-[11px] text-[#9aa3b8]">{gate.status}</p>
             </div>
             <button
@@ -204,9 +235,10 @@ export function AdminHomePage() {
               role="switch"
               aria-checked={gate.checked}
               aria-label={gate.title}
+              disabled={gate.disabled}
               onClick={gate.toggle}
-              className={`relative h-6 w-[46px] shrink-0 rounded-full transition-colors ${
-                gate.checked ? 'accent-gradient' : 'bg-[#cfd5e0]'
+              className={`relative h-6 w-[46px] shrink-0 rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+                gate.checked ? 'accent-gradient' : 'bg-[#cdd9ec]'
               }`}
             >
               <span
@@ -220,30 +252,28 @@ export function AdminHomePage() {
       </div>
 
       <div>
-        <p className="mb-3.5 font-mono text-[11px] tracking-wide text-[#8a96ad]">
-          // ACCESOS RÁPIDOS
-        </p>
+        <p className="mb-3.5 font-display text-lg font-bold text-navy">Accesos rápidos</p>
         <div className="flex flex-wrap gap-3">
           <button
             type="button"
             onClick={() => navigate('/admin/equipos')}
-            className="accent-gradient cursor-pointer rounded-md px-5 py-3.5 font-mono text-[13px] font-semibold text-navy"
+            className="accent-gradient cursor-pointer rounded-xl px-[22px] py-3.5 font-display text-sm font-bold text-white shadow-[0_10px_24px_-14px_rgba(47,107,224,0.8)]"
           >
-            GENERAR EQUIPOS
+            Generar equipos
           </button>
           <button
             type="button"
             disabled
-            className="cursor-not-allowed rounded-md border border-border bg-white px-5 py-3.5 font-mono text-[13px] text-navy opacity-50"
+            className="cursor-not-allowed rounded-xl border border-[#cdd9ec] bg-white px-[22px] py-3.5 font-display text-sm font-semibold text-navy opacity-50"
           >
-            AGREGAR PRODUCTO
+            Agregar producto
           </button>
           <button
             type="button"
             disabled
-            className="cursor-not-allowed rounded-md border border-border bg-white px-5 py-3.5 font-mono text-[13px] text-navy opacity-50"
+            className="cursor-not-allowed rounded-xl border border-[#cdd9ec] bg-white px-[22px] py-3.5 font-display text-sm font-semibold text-navy opacity-50"
           >
-            DESCARGAR RESULTADOS
+            Descargar resultados
           </button>
         </div>
       </div>
