@@ -9,22 +9,20 @@ const baseNavItems = [
   { to: '/admin', label: 'Inicio / Resumen', end: true },
   { to: '/admin/estudiantes', label: 'Estudiantes', end: false },
   { to: '/admin/equipos', label: 'Equipos', end: false },
+  { to: '/admin/marketplace', label: 'Marketplace', end: false },
+  { to: '/admin/calificacion', label: 'Calificación', end: false },
 ]
 
 const superAdminNavItems = [{ to: '/admin/usuarios', label: 'Usuarios', end: false }]
 
-const disabledNav = [
-  'Marketplace',
-  'Presupuestos',
-  'Calificación',
-  'Resultados',
-  'Control del evento',
-]
+const disabledNav: string[] = []
 
 const titles: Record<string, string> = {
   '/admin': 'Inicio / Resumen',
   '/admin/estudiantes': 'Estudiantes',
   '/admin/equipos': 'Equipos',
+  '/admin/marketplace': 'Marketplace',
+  '/admin/calificacion': 'Calificación',
   '/admin/usuarios': 'Usuarios privilegiados',
 }
 
@@ -80,7 +78,7 @@ export function AdminLayout() {
         }`}
       >
         <div className="mb-4 border-b border-white/10 px-2 pb-4">
-          <LogoLink to="/" height={28} onDark />
+          <LogoLink to="/" height={32} onDark />
         </div>
         <p className="mb-2.5 px-2 font-mono text-[10px] tracking-[1px] text-[#5e6f96]">
           NAVEGACIÓN
@@ -174,17 +172,21 @@ export function AdminHomePage() {
     },
     {
       title: 'Marketplace',
-      status: admin.marketplaceOpen ? 'Abierto' : 'Cerrado',
+      status: admin.marketplaceLoading
+        ? 'Cargando…'
+        : admin.marketplaceOpen
+          ? 'Abierto'
+          : 'Cerrado',
       checked: admin.marketplaceOpen,
-      toggle: admin.toggleMarketplace,
-      disabled: true,
+      toggle: () => void admin.toggleMarketplace(),
+      disabled: admin.marketplaceLoading || admin.marketplaceToggling,
     },
     {
       title: 'Calificación',
       status: admin.calificacionOpen ? 'Abierta' : 'Cerrada',
       checked: admin.calificacionOpen,
-      toggle: admin.toggleCalificacion,
-      disabled: true,
+      toggle: () => void admin.toggleCalificacion(),
+      disabled: admin.calificacionToggling,
     },
   ]
 
@@ -263,17 +265,17 @@ export function AdminHomePage() {
           </button>
           <button
             type="button"
-            disabled
-            className="cursor-not-allowed rounded-xl border border-[#cdd9ec] bg-white px-[22px] py-3.5 font-display text-sm font-semibold text-navy opacity-50"
+            onClick={() => navigate('/admin/marketplace')}
+            className="cursor-pointer rounded-xl border border-[#cdd9ec] bg-white px-[22px] py-3.5 font-display text-sm font-semibold text-navy hover:bg-[#f1f5fb]"
           >
             Agregar producto
           </button>
           <button
             type="button"
-            disabled
-            className="cursor-not-allowed rounded-xl border border-[#cdd9ec] bg-white px-[22px] py-3.5 font-display text-sm font-semibold text-navy opacity-50"
+            onClick={() => navigate('/admin/calificacion')}
+            className="cursor-pointer rounded-xl border border-[#cdd9ec] bg-white px-[22px] py-3.5 font-display text-sm font-semibold text-navy hover:bg-[#f1f5fb]"
           >
-            Descargar resultados
+            Ver resultados
           </button>
         </div>
       </div>

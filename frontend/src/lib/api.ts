@@ -87,6 +87,21 @@ export function mapApiErrorToSpanish(detail: unknown, fallback: string): string 
     if (detail === 'Leader must be a member of the team') {
       return 'El líder debe ser miembro del equipo.'
     }
+    if (detail === 'Marketplace is currently closed.') {
+      return 'El marketplace está cerrado en este momento.'
+    }
+    if (detail === 'Insufficient stock.') {
+      return 'Stock insuficiente para esta compra.'
+    }
+    if (detail === 'Insufficient budget.') {
+      return 'Presupuesto insuficiente para esta compra.'
+    }
+    if (detail === 'Producto no encontrado.') {
+      return 'Producto no encontrado.'
+    }
+    if (detail === 'Solo el líder puede realizar esta acción.') {
+      return 'Solo el líder del equipo puede realizar compras.'
+    }
     return detail
   }
 

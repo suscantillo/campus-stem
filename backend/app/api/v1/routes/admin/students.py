@@ -23,6 +23,16 @@ async def list_students(
     return await service.list_students()
 
 
+@router.delete("/{student_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_student(
+    student_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    _: Usuario = Depends(require_roles(RolUsuario.ADMIN)),
+):
+    service = StudentsService(db)
+    await service.delete_student(student_id)
+
+
 @router.patch("/{student_id}/equipo", status_code=status.HTTP_204_NO_CONTENT)
 async def assign_student_equipo(
     student_id: UUID,

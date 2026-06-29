@@ -1,51 +1,59 @@
 import { Link } from 'react-router-dom'
 
+export type LogoVariant = 'horizontal' | 'stacked' | 'icon'
+
+const LOGO_SRC: Record<LogoVariant, string> = {
+  horizontal: '/letrasizquierda.svg',
+  stacked: '/letrasabajo.svg',
+  icon: '/campusstemsinletra.svg',
+}
+
 interface LogoProps {
   className?: string
-  /** Height of the logo image in px */
   height?: number
-  /** Wrap the logo in a white rounded badge so the dark line-art stays visible on dark surfaces */
+  variant?: LogoVariant
+  /**
+   * true  → sobre fondo oscuro: SVG blanco, sin filtro
+   * false → sobre fondo claro: brightness(0) lo hace negro
+   */
   onDark?: boolean
 }
 
-export function Logo({ className = '', height = 40, onDark = false }: LogoProps) {
-  const img = (
-    <img
-      src="/logo.png"
-      alt="Campus STEM"
-      style={{ height }}
-      className="block w-auto select-none"
-      draggable={false}
-    />
+export function Logo({
+  className = '',
+  height = 40,
+  variant = 'horizontal',
+  onDark = false,
+}: LogoProps) {
+  return (
+    <span className={`inline-flex  items-center ${className}`}>
+      <img
+        src={LOGO_SRC[variant]}
+        alt="Campus STEM"
+        style={{ height, filter: onDark ? undefined : 'brightness(0)' }}
+        className="block w-auto select-none"
+        draggable={false}
+      />
+    </span>
   )
-
-  if (onDark) {
-    return (
-      <span
-        className={`inline-flex items-center rounded-xl bg-white px-2.5 py-1.5 shadow-sm ${className}`}
-      >
-        {img}
-      </span>
-    )
-  }
-
-  return <span className={`inline-flex items-center ${className}`}>{img}</span>
 }
 
 export function LogoLink({
   to = '/',
   height = 40,
+  variant = 'horizontal',
   onDark = false,
   className = '',
 }: {
   to?: string
   height?: number
+  variant?: LogoVariant
   onDark?: boolean
   className?: string
 }) {
   return (
-    <Link to={to} aria-label="Campus STEM — inicio" className="inline-flex">
-      <Logo height={height} onDark={onDark} className={className} />
+    <Link to={to} aria-label="Campus STEM — inicio" className="inline-flex shrink-0">
+      <Logo height={height} variant={variant} onDark={onDark} className={className} />
     </Link>
   )
 }

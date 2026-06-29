@@ -1,11 +1,119 @@
-import { Link } from 'react-router-dom'
-import { LogoLink } from '../components/Logo'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Logo, LogoLink } from '../components/Logo'
+import { UserAvatar } from '../components/UserAvatar'
+import { useAuth } from '../context/AuthContext'
 import {
   calendarDays,
   infoCards,
   landingStats,
   type InfoIcon,
 } from '../data/landingContent'
+
+const HERO_PHOTOS = [
+  '/fotos/WhatsApp Image 2026-06-23 at 3.49.09 PM.jpeg',
+  '/fotos/WhatsApp Image 2026-06-23 at 3.49.09 PM (1).jpeg',
+  '/fotos/WhatsApp Image 2026-06-23 at 3.49.09 PM (2).jpeg',
+  '/fotos/WhatsApp Image 2026-06-23 at 3.49.10 PM.jpeg',
+  '/fotos/WhatsApp Image 2026-06-23 at 3.49.10 PM (1).jpeg',
+  '/fotos/WhatsApp Image 2026-06-23 at 3.49.10 PM (2).jpeg',
+]
+
+function HeroCarousel() {
+  const [current, setCurrent] = useState(0)
+  const [animating, setAnimating] = useState(false)
+  const pausedRef = useRef(false)
+
+  const goTo = (idx: number) => {
+    if (animating) return
+    setAnimating(true)
+    setCurrent((idx + HERO_PHOTOS.length) % HERO_PHOTOS.length)
+    setTimeout(() => setAnimating(false), 600)
+  }
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (!pausedRef.current) goTo(current + 1)
+    }, 4200)
+    return () => clearInterval(id)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current])
+
+  return (
+    <div
+      className="relative w-full overflow-hidden rounded-3xl"
+      style={{ aspectRatio: '4/5' }}
+      onMouseEnter={() => { pausedRef.current = true }}
+      onMouseLeave={() => { pausedRef.current = false }}
+    >
+      {/* ───── slides ───── */}
+      <div
+        className="flex h-full transition-transform duration-[600ms] ease-in-out will-change-transform"
+        style={{ transform: `translateX(-${current * 100}%)` }}
+      >
+        {HERO_PHOTOS.map((src, i) => (
+          <img
+            key={src}
+            src={src}
+            alt={`Campus STEM foto ${i + 1}`}
+            className="h-full w-full shrink-0 object-cover"
+            loading={i === 0 ? 'eager' : 'lazy'}
+          />
+        ))}
+      </div>
+
+      {/* ───── gradient overlays ───── */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#012854]/55 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#012854]/75 to-transparent" />
+
+      {/* ───── nav arrows ───── */}
+      <button
+        type="button"
+        onClick={() => goTo(current - 1)}
+        aria-label="Foto anterior"
+        className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-[#012854]/45 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-[#012854]/70 group-hover:opacity-100 sm:opacity-60 sm:hover:opacity-100"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        onClick={() => goTo(current + 1)}
+        aria-label="Foto siguiente"
+        className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-[#012854]/45 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-[#012854]/70 group-hover:opacity-100 sm:opacity-60 sm:hover:opacity-100"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="M9 18l6-6-6-6" />
+        </svg>
+      </button>
+
+      {/* ───── dots ───── */}
+      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5">
+        {HERO_PHOTOS.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => goTo(i)}
+            aria-label={`Ir a foto ${i + 1}`}
+            className={`rounded-full transition-all duration-300 ${
+              i === current
+                ? 'h-2 w-6 bg-[#5aa9e6]'
+                : 'h-2 w-2 bg-white/45 hover:bg-white/70'
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* ───── corner badge ───── */}
+      <div className="absolute top-3.5 right-4 rounded-full border border-white/25 bg-[#012854]/55 px-3 py-1 backdrop-blur-sm">
+        <span className="font-display text-[11px] font-semibold text-[#bcd3f2]">
+          {current + 1} / {HERO_PHOTOS.length}
+        </span>
+      </div>
+    </div>
+  )
+}
 
 function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
@@ -50,70 +158,28 @@ function InfoIconGlyph({ icon }: { icon: InfoIcon }) {
   )
 }
 
-function HeroArch() {
-  return (
-    <svg
-      viewBox="0 0 360 380"
-      className="block h-auto w-full"
-      fill="none"
-      stroke="#012854"
-      strokeWidth="3.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M52 366 L52 172 C52 92 109 32 180 32 C251 32 308 92 308 172 L308 366" />
-      {/* book */}
-      <path d="M180 300 C152 288 112 288 92 296 L92 340 C112 332 152 332 180 344 C208 332 248 332 268 340 L268 296 C248 288 208 288 180 300 Z" />
-      <line x1="180" y1="300" x2="180" y2="344" />
-      <path
-        d="M96 333 C116 326 152 326 180 337 C208 326 244 326 264 333"
-        stroke="#2f6be0"
-        strokeWidth="4"
-      />
-      {/* bulb */}
-      <g transform="translate(150,116) scale(2.3)" strokeWidth="1.5">
-        <path d="M12 2a8 8 0 0 0-5 14c.9.8 1.3 1.6 1.3 2.6V20h7.4v-1.4c0-1 .4-1.8 1.3-2.6A8 8 0 0 0 12 2Z" />
-        <line x1="9" y1="22" x2="15" y2="22" />
-        <path d="M12 8v6M9.5 11h5" stroke="#2f6be0" />
-      </g>
-      {/* atom */}
-      <g transform="translate(96,96) scale(1.5)" strokeWidth="2">
-        <circle cx="12" cy="12" r="2" />
-        <ellipse cx="12" cy="12" rx="11" ry="4.2" />
-        <ellipse cx="12" cy="12" rx="11" ry="4.2" transform="rotate(60 12 12)" />
-        <ellipse cx="12" cy="12" rx="11" ry="4.2" transform="rotate(120 12 12)" />
-      </g>
-      {/* lightning */}
-      <g transform="translate(232,92) scale(1.5)" strokeWidth="2">
-        <path d="M14 2 6 13h5l-1 9 9-12h-6l1-8Z" />
-      </g>
-      {/* chip */}
-      <g transform="translate(96,188) scale(1.4)" strokeWidth="2">
-        <rect x="6" y="6" width="12" height="12" rx="2.5" />
-        <rect x="9.5" y="9.5" width="5" height="5" rx="1" />
-        <path d="M9 6V3M15 6V3M9 18v3M15 18v3M6 9H3M6 15H3M18 9h3M18 15h3" />
-      </g>
-      {/* gear */}
-      <g transform="translate(228,184) scale(1.5)" strokeWidth="2">
-        <circle cx="12" cy="12" r="3.2" />
-        <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" />
-      </g>
-    </svg>
-  )
-}
 
 export function LandingPage() {
+  const { user, isAuthenticated, logout } = useAuth()
+  const navigate = useNavigate()
+  const isEstudiante = user?.rol === 'estudiante'
+
+  async function handleLogout() {
+    await logout()
+  }
+
   return (
     <div className="min-h-screen bg-surface">
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center gap-5 border-b border-[#dde7f4] bg-white/85 px-6 py-3.5 backdrop-blur-md md:px-8">
-        <LogoLink height={38} />
-        <nav className="ml-auto flex items-center gap-5 md:gap-6">
+      <header className="sticky top-0 z-10 border-b border-[#dde7f4] bg-white/90 backdrop-blur-md">
+        <div className="flex items-center gap-3 px-4 py-3 sm:gap-5 sm:px-8">
+          <LogoLink height={80} />
+
+          {/* Info/Calendario — solo desktop */}
           <button
             type="button"
             onClick={() => scrollToId('info')}
-            className="hidden cursor-pointer font-display text-[15px] font-semibold text-[#3a4868] transition-colors hover:text-navy sm:inline"
+            className="ml-4 hidden cursor-pointer font-display text-[15px] font-semibold text-[#3a4868] transition-colors hover:text-navy sm:inline"
           >
             Info
           </button>
@@ -124,19 +190,65 @@ export function LandingPage() {
           >
             Calendario
           </button>
-          <Link
-            to="/login"
-            className="font-display text-[15px] font-semibold text-navy hover:underline"
-          >
-            Ingresar
-          </Link>
-          <Link
-            to="/registro"
-            className="accent-gradient rounded-xl px-5 py-2.5 font-display text-[15px] font-bold text-white shadow-[0_8px_20px_-10px_rgba(47,107,224,0.8)] transition-transform hover:-translate-y-0.5"
-          >
-            Registrarse
-          </Link>
-        </nav>
+
+          <nav className="ml-auto flex items-center gap-2 sm:gap-3">
+            {isAuthenticated && isEstudiante ? (
+              <>
+                <Link
+                  to="/mi-equipo"
+                  className="font-display text-[13px] font-semibold text-[#3a4868] transition-colors hover:text-navy sm:text-[15px]"
+                >
+                  Mi Equipo
+                </Link>
+                <Link
+                  to="/marketplace"
+                  className="font-display text-[13px] font-semibold text-[#3a4868] transition-colors hover:text-navy sm:text-[15px]"
+                >
+                  Marketplace
+                </Link>
+                <UserAvatar name={user.nombre_completo} />
+                <button
+                  type="button"
+                  onClick={() => void handleLogout()}
+                  className="rounded-xl border border-[#cdd9ec] px-3 py-2 font-display text-[13px] font-semibold text-navy hover:bg-[#f1f5fb] sm:px-4"
+                >
+                  Salir
+                </button>
+              </>
+            ) : isAuthenticated && !isEstudiante ? (
+              <>
+                <Link
+                  to="/admin"
+                  className="font-display text-[14px] font-semibold text-[#3a4868] hover:text-navy"
+                >
+                  Panel admin
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => void handleLogout()}
+                  className="rounded-xl border border-[#cdd9ec] px-3 py-2 font-display text-[13px] font-semibold text-navy hover:bg-[#f1f5fb] sm:px-4"
+                >
+                  Salir
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="font-display text-[14px] font-semibold text-navy hover:underline sm:text-[15px]"
+                >
+                  Ingresar
+                </Link>
+                <Link
+                  to="/registro"
+                  className="accent-gradient rounded-xl px-4 py-2.5 font-display text-[14px] font-bold text-white shadow-[0_8px_20px_-10px_rgba(47,107,224,0.8)] transition-transform hover:-translate-y-0.5 sm:px-5 sm:text-[15px]"
+                >
+                  Registrarse
+                </Link>
+              </>
+            )}
+          </nav>
+        </div>
       </header>
 
       {/* Hero */}
@@ -175,9 +287,9 @@ export function LandingPage() {
             </div>
           </div>
 
-          <div className="flex min-w-[300px] flex-[0_1_380px] justify-center">
-            <div className="w-full max-w-[380px] rounded-3xl bg-white p-6 shadow-[0_30px_60px_-28px_rgba(1,40,84,0.6)]">
-              <HeroArch />
+          <div className="group flex min-w-[280px] flex-[0_1_400px] justify-center">
+            <div className="w-full max-w-[400px] shadow-[0_40px_80px_-30px_rgba(1,40,84,0.8)]" style={{ borderRadius: '1.5rem' }}>
+              <HeroCarousel />
             </div>
           </div>
         </div>
@@ -252,29 +364,39 @@ export function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-[18px]">
+          <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 xl:grid-cols-4">
             {calendarDays.map((day) => (
               <div
                 key={day.idx}
                 className="relative overflow-hidden rounded-3xl border border-white/12 bg-white/4 px-[22px] py-6"
               >
-                <div className="absolute -top-[18px] right-1.5 font-display text-[120px] leading-none font-bold text-white/5">
+                {/* Número decorativo de fondo */}
+                <div className="absolute -top-[18px] right-1.5 font-display text-[120px] leading-none font-bold text-white/5 select-none">
                   {day.idx}
                 </div>
+
                 <div className="relative">
-                  <div className="font-display text-[21px] font-bold text-white">{day.label}</div>
-                  <div className="mt-1 mb-[18px] font-display text-sm font-semibold text-[#5aa9e6]">
-                    {day.date}
+                  {/* Encabezado del día */}
+                  <div className="mb-3.5">
+                    <p className="mb-0.5 font-mono text-[10px] tracking-[1.5px] text-[#5aa9e6] uppercase">
+                      Día {day.idx} · {day.date}
+                    </p>
+                    <h3 className="font-display text-[20px] font-bold leading-tight text-white">
+                      {day.label}
+                    </h3>
+                    <p className="mt-1 text-[13px] leading-snug text-[#8aa0c8]">{day.theme}</p>
                   </div>
+
+                  {/* Actividades */}
                   {day.acts.map((act) => (
                     <div
                       key={`${act.time}-${act.name}`}
-                      className="flex gap-3 border-t border-white/10 py-[11px]"
+                      className="flex gap-3 border-t border-white/10 py-2.5"
                     >
-                      <span className="min-w-[42px] font-mono text-xs text-[#5aa9e6]">
+                      <span className="min-w-[38px] shrink-0 font-mono text-[11px] text-[#5aa9e6]">
                         {act.time}
                       </span>
-                      <span className="text-sm text-[#cdd6e8]">{act.name}</span>
+                      <span className="text-[13px] leading-snug text-[#cdd6e8]">{act.name}</span>
                     </div>
                   ))}
                 </div>
@@ -303,8 +425,8 @@ export function LandingPage() {
       <footer className="bg-navy-dark text-[#8a98ba]">
         <div className="mx-auto flex max-w-[1180px] flex-wrap justify-between gap-10 px-6 py-13 md:px-8">
           <div>
-            <div className="mb-3 font-display text-lg font-bold text-white">Rama IEEE Uninorte</div>
-            <p className="max-w-[260px] text-sm leading-relaxed">
+            <Logo height={64} variant="stacked" onDark className="mb-4" />
+            <p className="max-w-[240px] text-sm leading-relaxed">
               Organizado por la Rama Estudiantil IEEE de la Universidad del Norte, Barranquilla.
             </p>
           </div>

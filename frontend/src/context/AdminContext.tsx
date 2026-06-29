@@ -2,6 +2,9 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { ApiError, mapApiErrorToSpanish } from '../lib/api'
 import { listStudents } from '../lib/adminStudentsApi'
 import { listTeams } from '../lib/adminTeamsApi'
+import { toggleMarketplace, listProductosAdmin } from '../lib/adminMarketplaceApi'
+import { getCalificacionStatus, toggleCalificacion as apiToggleCalificacion } from '../lib/adminCalificacionApi'
+import { getMarketplaceStatus } from '../lib/marketplaceApi'
 import { getRegistrationStatus, setRegistrationEnabled } from '../lib/authApi'
 import { useNotification } from './NotificationContext'
 
@@ -11,13 +14,17 @@ interface EventGates {
   registroToggling: boolean
   registroError: string | null
   marketplaceOpen: boolean
+  marketplaceLoading: boolean
+  marketplaceToggling: boolean
   calificacionOpen: boolean
+  calificacionToggling: boolean
 }
 
 interface AdminContextValue extends EventGates {
   toggleRegistro: () => Promise<void>
-  toggleMarketplace: () => void
-  toggleCalificacion: () => void
+  toggleMarketplace: () => Promise<void>
+  calificacionToggling: boolean
+  toggleCalificacion: () => Promise<void>
   studentCount: number
   teamCount: number
   productCount: number
@@ -32,15 +39,20 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [registroToggling, setRegistroToggling] = useState(false)
   const [registroError, setRegistroError] = useState<string | null>(null)
   const [marketplaceOpen, setMarketplaceOpen] = useState(false)
+  const [marketplaceLoading, setMarketplaceLoading] = useState(true)
+  const [marketplaceToggling, setMarketplaceToggling] = useState(false)
   const [calificacionOpen, setCalificacionOpen] = useState(false)
+  const [calificacionToggling, setCalificacionToggling] = useState(false)
   const [studentCount, setStudentCount] = useState(0)
   const [teamCount, setTeamCount] = useState(0)
+  const [productCount, setProductCount] = useState(0)
 
   const loadDashboardCounts = useCallback(async () => {
     try {
-      const [students, teams] = await Promise.all([listStudents(), listTeams()])
+      const [students, teams, productos] = await Promise.all([listStudents(), listTeams(), listProductosAdmin()])
       setStudentCount(students.total)
       setTeamCount(teams.total)
+      setProductCount(productos.total)
     } catch {
       // KPIs are non-blocking; pages load their own data.
     }
@@ -63,10 +75,33 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  const loadMarketplaceStatus = useCallback(async () => {
+    setMarketplaceLoading(true)
+    try {
+      const data = await getMarketplaceStatus()
+      setMarketplaceOpen(data.marketplace_abierto)
+    } catch {
+      // non-blocking
+    } finally {
+      setMarketplaceLoading(false)
+    }
+  }, [])
+
+  const loadCalificacionStatus = useCallback(async () => {
+    try {
+      const data = await getCalificacionStatus()
+      setCalificacionOpen(data.calificacion_abierta)
+    } catch {
+      // non-blocking
+    }
+  }, [])
+
   useEffect(() => {
     void loadRegistrationStatus()
+    void loadMarketplaceStatus()
+    void loadCalificacionStatus()
     void loadDashboardCounts()
-  }, [loadRegistrationStatus, loadDashboardCounts])
+  }, [loadRegistrationStatus, loadMarketplaceStatus, loadCalificacionStatus, loadDashboardCounts])
 
   const toggleRegistro = useCallback(async () => {
     if (registroToggling || registroLoading) return
@@ -97,6 +132,44 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     }
   }, [registroOpen, registroLoading, registroToggling, notify])
 
+  const handleToggleMarketplace = useCallback(async () => {
+    if (marketplaceToggling || marketplaceLoading) return
+    const next = !marketplaceOpen
+    setMarketplaceToggling(true)
+    try {
+      const data = await toggleMarketplace(next)
+      setMarketplaceOpen(data.marketplace_abierto)
+      notify({
+        type: 'success',
+        title: data.marketplace_abierto ? 'Marketplace abierto' : 'Marketplace cerrado',
+        message: data.marketplace_abierto
+          ? 'Los líderes ya pueden comprar.'
+          : 'Las compras han sido deshabilitadas.',
+      })
+    } catch (error) {
+      const message =
+        error instanceof ApiError
+          ? mapApiErrorToSpanish(error.detail, 'No se pudo actualizar el marketplace.')
+          : 'No se pudo conectar con el servidor.'
+      notify({ type: 'error', title: 'Error', message })
+    } finally {
+      setMarketplaceToggling(false)
+    }
+  }, [marketplaceOpen, marketplaceLoading, marketplaceToggling, notify])
+
+  const handleToggleCalificacion = useCallback(async () => {
+    if (calificacionToggling) return
+    setCalificacionToggling(true)
+    try {
+      const data = await apiToggleCalificacion(!calificacionOpen)
+      setCalificacionOpen(data.calificacion_abierta)
+    } catch {
+      // silently ignore; GateTab shows the real error
+    } finally {
+      setCalificacionToggling(false)
+    }
+  }, [calificacionOpen, calificacionToggling])
+
   const value = useMemo<AdminContextValue>(
     () => ({
       registroOpen,
@@ -104,13 +177,16 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       registroToggling,
       registroError,
       marketplaceOpen,
+      marketplaceLoading,
+      marketplaceToggling,
       calificacionOpen,
+      calificacionToggling,
       toggleRegistro,
-      toggleMarketplace: () => setMarketplaceOpen((v) => !v),
-      toggleCalificacion: () => setCalificacionOpen((v) => !v),
+      toggleMarketplace: handleToggleMarketplace,
+      toggleCalificacion: handleToggleCalificacion,
       studentCount,
       teamCount,
-      productCount: 14,
+      productCount,
     }),
     [
       registroOpen,
@@ -118,10 +194,16 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       registroToggling,
       registroError,
       marketplaceOpen,
+      marketplaceLoading,
+      marketplaceToggling,
       calificacionOpen,
+      calificacionToggling,
       toggleRegistro,
+      handleToggleMarketplace,
+      handleToggleCalificacion,
       studentCount,
       teamCount,
+      productCount,
     ],
   )
 

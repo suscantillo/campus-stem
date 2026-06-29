@@ -30,3 +30,27 @@ class PlatformControlsService:
         await self.db.commit()
         await self.db.refresh(controls)
         return controls
+
+    async def is_marketplace_abierto(self) -> bool:
+        controls = await self.get_controls()
+        return controls.marketplace_abierto
+
+    async def set_marketplace_abierto(self, abierto: bool) -> PlatformControls:
+        controls = await self.get_controls()
+        controls.marketplace_abierto = abierto
+        controls.updated_at = datetime.now(timezone.utc)
+        await self.db.commit()
+        await self.db.refresh(controls)
+        return controls
+
+    async def is_calificacion_abierta(self) -> bool:
+        controls = await self.get_controls()
+        return controls.calificacion_abierta
+
+    async def set_calificacion_abierta(self, abierta: bool) -> PlatformControls:
+        controls = await self.get_controls()
+        controls.calificacion_abierta = abierta
+        controls.updated_at = datetime.now(timezone.utc)
+        await self.db.commit()
+        await self.db.refresh(controls)
+        return controls

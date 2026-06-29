@@ -22,6 +22,10 @@ export function listStudents() {
   return apiAuth<StudentListResponse>('/admin/students')
 }
 
+export function deleteStudent(studentId: string) {
+  return apiAuth<void>(`/admin/students/${studentId}`, { method: 'DELETE' })
+}
+
 export function formatGrado(grado: number | null): string {
   if (grado === null) return '—'
   return `${grado}.°`
