@@ -235,7 +235,6 @@ export function JudgePage() {
     setEquipos(prev => prev.map(e => e.equipo_id === updated.equipo_id ? updated : e))
   }
 
-  const pendientes = equipos.filter(e => !e.calificacion).length
   const enviadas = equipos.filter(e => e.calificacion).length
 
   return (

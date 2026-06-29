@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Logo, LogoLink } from '../components/Logo'
 import { UserAvatar } from '../components/UserAvatar'
 import { useAuth } from '../context/AuthContext'
@@ -161,7 +161,6 @@ function InfoIconGlyph({ icon }: { icon: InfoIcon }) {
 
 export function LandingPage() {
   const { user, isAuthenticated, logout } = useAuth()
-  const navigate = useNavigate()
   const isEstudiante = user?.rol === 'estudiante'
 
   async function handleLogout() {

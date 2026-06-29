@@ -18,7 +18,6 @@ import {
   type MatrizAsignacionesResponse,
   type ResultadosResponse,
 } from '../../lib/adminCalificacionApi'
-import { useAuth } from '../../context/AuthContext'
 
 type Tab = 'rubrica' | 'asignaciones' | 'gate' | 'resultados'
 
@@ -68,7 +67,7 @@ function RubricaTab({ locked }: { locked: boolean }) {
       setNombre(''); setPuntaje(''); setDesc('')
       notify({ type: 'success', title: 'Criterio añadido' })
     } catch (err) {
-      notify({ type: 'error', title: 'Error', message: err instanceof ApiError ? mapApiErrorToSpanish(err.detail) : 'Error al añadir.' })
+      notify({ type: 'error', title: 'Error', message: err instanceof ApiError ? mapApiErrorToSpanish(err.detail, 'Error al añadir.') : 'Error al añadir.' })
     } finally { setAdding(false) }
   }
 
@@ -78,7 +77,7 @@ function RubricaTab({ locked }: { locked: boolean }) {
       setCriterios(prev => prev.map(c => c.id === id ? updated : c))
       setEditId(null)
     } catch (err) {
-      notify({ type: 'error', title: 'Error', message: err instanceof ApiError ? mapApiErrorToSpanish(err.detail) : 'Error al guardar.' })
+      notify({ type: 'error', title: 'Error', message: err instanceof ApiError ? mapApiErrorToSpanish(err.detail, 'Error al guardar.') : 'Error al guardar.' })
     }
   }
 
@@ -87,7 +86,7 @@ function RubricaTab({ locked }: { locked: boolean }) {
       await deleteCriterio(id)
       setCriterios(prev => prev.filter(c => c.id !== id))
     } catch (err) {
-      notify({ type: 'error', title: 'No se pudo eliminar', message: err instanceof ApiError ? mapApiErrorToSpanish(err.detail) : 'Error.' })
+      notify({ type: 'error', title: 'No se pudo eliminar', message: err instanceof ApiError ? mapApiErrorToSpanish(err.detail, 'Error.') : 'Error.' })
     }
   }
 
@@ -221,7 +220,7 @@ function AsignacionesTab() {
     const key = `${juez_id}:${equipo_id}`
     setToggling(key)
     try { setMatriz(await toggleAsignacion(juez_id, equipo_id)) }
-    catch (err) { notify({ type: 'error', title: 'Error', message: err instanceof ApiError ? mapApiErrorToSpanish(err.detail) : 'Error.' }) }
+    catch (err) { notify({ type: 'error', title: 'Error', message: err instanceof ApiError ? mapApiErrorToSpanish(err.detail, 'Error.') : 'Error.' }) }
     finally { setToggling(null) }
   }
 
@@ -379,7 +378,6 @@ function GateTab({
 // ── Tab: Resultados ────────────────────────────────────────────────────────────
 
 function ResultadosTab() {
-  const { user } = useAuth()
   const [data, setData] = useState<ResultadosResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

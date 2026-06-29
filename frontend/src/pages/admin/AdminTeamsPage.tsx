@@ -33,7 +33,7 @@ function TeamCard({ team, allTeams, busy, onRefresh }: TeamCardProps) {
     setNameDraft(team.nombre)
   }, [team.nombre])
 
-  async function runAction(action: () => Promise<void>, successMessage: string) {
+  async function runAction(action: () => Promise<unknown>, successMessage: string) {
     setActing(true)
     try {
       await action()
