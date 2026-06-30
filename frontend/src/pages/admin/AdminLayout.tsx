@@ -11,6 +11,7 @@ const baseNavItems = [
   { to: '/admin/equipos', label: 'Equipos', end: false },
   { to: '/admin/marketplace', label: 'Marketplace', end: false },
   { to: '/admin/calificacion', label: 'Calificación', end: false },
+  { to: '/admin/helios', label: 'Escape Room', end: false },
 ]
 
 const superAdminNavItems = [{ to: '/admin/usuarios', label: 'Usuarios', end: false }]
@@ -23,6 +24,7 @@ const titles: Record<string, string> = {
   '/admin/equipos': 'Equipos',
   '/admin/marketplace': 'Marketplace',
   '/admin/calificacion': 'Calificación',
+  '/admin/helios': 'Escape Room — HELIOS',
   '/admin/usuarios': 'Usuarios privilegiados',
 }
 
