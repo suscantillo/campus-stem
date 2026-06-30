@@ -43,6 +43,18 @@ class PlatformControlsService:
         await self.db.refresh(controls)
         return controls
 
+    async def is_helios_abierto(self) -> bool:
+        controls = await self.get_controls()
+        return controls.helios_abierto
+
+    async def set_helios_abierto(self, abierto: bool) -> PlatformControls:
+        controls = await self.get_controls()
+        controls.helios_abierto = abierto
+        controls.updated_at = datetime.now(timezone.utc)
+        await self.db.commit()
+        await self.db.refresh(controls)
+        return controls
+
     async def is_calificacion_abierta(self) -> bool:
         controls = await self.get_controls()
         return controls.calificacion_abierta

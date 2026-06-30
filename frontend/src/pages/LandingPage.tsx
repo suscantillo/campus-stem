@@ -9,6 +9,7 @@ import {
   landingStats,
   type InfoIcon,
 } from '../data/landingContent'
+import { getHeliosStatus } from '../lib/heliosApi'
 
 const HERO_PHOTOS = [
   '/fotos/WhatsApp Image 2026-06-23 at 3.49.09 PM.jpeg',
@@ -162,6 +163,11 @@ function InfoIconGlyph({ icon }: { icon: InfoIcon }) {
 export function LandingPage() {
   const { user, isAuthenticated, logout } = useAuth()
   const isEstudiante = user?.rol === 'estudiante'
+  const [heliosAbierto, setHeliosAbierto] = useState(false)
+
+  useEffect(() => {
+    void getHeliosStatus().then(d => setHeliosAbierto(d.helios_abierto)).catch(() => {})
+  }, [])
 
   async function handleLogout() {
     await logout()
@@ -404,6 +410,64 @@ export function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Helios Escape Room */}
+      {heliosAbierto && (
+        <section className="relative overflow-hidden bg-[#030d08]">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(0,255,136,0.12),transparent)]" />
+          <div className="relative mx-auto flex max-w-[1180px] flex-wrap items-center gap-12 px-6 py-16 md:px-8 md:py-20">
+            {/* Text */}
+            <div className="min-w-[280px] flex-1">
+              <p className="mb-3 font-mono text-[11px] tracking-[4px] text-[#00aa55]">SISTEMA ACTIVO</p>
+              <h2 className="font-mono text-[clamp(28px,4vw,46px)] font-bold leading-[1.1] tracking-[-1px] text-[#00ff88]">
+                PROYECTO HELIOS
+              </h2>
+              <p className="mt-4 max-w-md font-mono text-[14px] leading-relaxed text-[#4a8a6a]">
+                La microred de la universidad ha sido comprometida. Tienes 2 horas para recorrer el campus, recuperar los fragmentos de la clave y restaurar el sistema antes de que sea demasiado tarde.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                {isAuthenticated && isEstudiante ? (
+                  <Link
+                    to="/helios"
+                    className="inline-flex items-center gap-2 rounded-xl border border-[#00ff88] bg-[#00ff88] px-8 py-3.5 font-mono text-[15px] font-bold text-[#030d08] transition-all hover:bg-[#00dd77] hover:shadow-[0_0_24px_rgba(0,255,136,0.4)]"
+                  >
+                    ACCEDER AL SISTEMA
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </Link>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="inline-flex items-center gap-2 rounded-xl border border-[#00ff88] bg-transparent px-8 py-3.5 font-mono text-[15px] font-bold text-[#00ff88] transition-all hover:bg-[#00ff88] hover:text-[#030d08] hover:shadow-[0_0_24px_rgba(0,255,136,0.35)]"
+                  >
+                    INICIAR SESIÓN PARA ACCEDER
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </Link>
+                )}
+              </div>
+            </div>
+
+            {/* Terminal panel */}
+            <div className="w-full max-w-[360px] shrink-0 rounded-2xl border border-[#1a3a2a] bg-[#050f0a] p-5 font-mono text-[12px] shadow-[0_0_40px_rgba(0,255,136,0.08)]">
+              <div className="mb-3 flex items-center gap-2">
+                <div className="h-2.5 w-2.5 rounded-full bg-[#ff4444]" />
+                <div className="h-2.5 w-2.5 rounded-full bg-[#ffaa00]" />
+                <div className="h-2.5 w-2.5 rounded-full bg-[#00ff88]" />
+                <span className="ml-2 text-[#1a3a2a]">helios_system.log</span>
+              </div>
+              <div className="space-y-1.5 text-[#4a7a5a]">
+                <p><span className="text-[#00ff88]">$</span> status --all</p>
+                <p className="text-[#ff4444]">GENERACIÓN SOLAR: 0%</p>
+                <p className="text-[#ff4444]">RED ELÉCTRICA: DESCONECTADA</p>
+                <p className="text-[#ffaa00]">BATERÍAS: 18%</p>
+                <p className="text-[#ff4444]">TRANSFERENCIA EN CURSO...</p>
+                <p className="mt-3"><span className="text-[#00ff88]">$</span> tiempo_restante</p>
+                <p className="text-[#ffaa00] font-bold">02:00:00</p>
+                <p className="mt-3 text-[#00ff88]">_ <span className="animate-pulse">█</span></p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CTA band */}
       <section className="accent-gradient">

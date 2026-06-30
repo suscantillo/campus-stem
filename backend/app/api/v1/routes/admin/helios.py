@@ -10,13 +10,30 @@ from app.schemas.helios import (
     CreateHeliosEquipoRequest,
     EstudianteDisponibleResponse,
     HeliosEquipoAdminResponse,
+    HeliosStatusResponse,
+    HeliosToggleRequest,
     SetHeliosLiderRequest,
 )
 from app.services import helios_service
+from app.services.platform_controls_service import PlatformControlsService
 
 router = APIRouter(prefix="/admin/helios")
 
 _any_admin = Depends(require_roles(RolUsuario.ADMIN, RolUsuario.SUPER_ADMIN))
+
+
+# ── Helios toggle ──────────────────────────────────────────────────────────────
+
+@router.get("/status", response_model=HeliosStatusResponse)
+async def get_helios_status(db: AsyncSession = Depends(get_db), _=_any_admin):
+    abierto = await PlatformControlsService(db).is_helios_abierto()
+    return HeliosStatusResponse(helios_abierto=abierto)
+
+
+@router.patch("/toggle", response_model=HeliosStatusResponse)
+async def toggle_helios(data: HeliosToggleRequest, db: AsyncSession = Depends(get_db), _=_any_admin):
+    controls = await PlatformControlsService(db).set_helios_abierto(data.helios_abierto)
+    return HeliosStatusResponse(helios_abierto=controls.helios_abierto)
 
 
 # ── Game overview / reset routes ───────────────────────────────────────────────

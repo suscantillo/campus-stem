@@ -1,4 +1,4 @@
-import { apiAuth } from './api'
+import { api, apiAuth } from './api'
 
 export interface StationInfo {
   id: string
@@ -9,6 +9,12 @@ export interface StationInfo {
   auto_completar: boolean
 }
 
+export interface HeliosMiembroInfo {
+  usuario_id: string
+  nombre_completo: string
+  es_lider: boolean
+}
+
 export interface EquipoProgress {
   equipo_id: string
   nombre: string
@@ -16,6 +22,7 @@ export interface EquipoProgress {
   ruta_nombre: string
   numero: number
   es_lider: boolean
+  miembros: HeliosMiembroInfo[]
   estaciones_completadas: string[]
   fragmentos: string[]
   total_estaciones: number
@@ -86,6 +93,21 @@ export interface EstudianteDisponible {
   id: string
   nombre_completo: string
   email: string
+}
+
+// ── Public status ──────────────────────────────────────────────────────────────
+
+export function getHeliosStatus() {
+  return api<{ helios_abierto: boolean }>('/helios/status')
+}
+
+// ── Admin toggle ───────────────────────────────────────────────────────────────
+
+export function toggleHelios(helios_abierto: boolean) {
+  return apiAuth<{ helios_abierto: boolean }>('/admin/helios/toggle', {
+    method: 'PATCH',
+    body: JSON.stringify({ helios_abierto }),
+  })
 }
 
 // ── Game API (all authenticated) ───────────────────────────────────────────────

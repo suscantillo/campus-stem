@@ -4,6 +4,7 @@ import { listStudents } from '../lib/adminStudentsApi'
 import { listTeams } from '../lib/adminTeamsApi'
 import { toggleMarketplace, listProductosAdmin } from '../lib/adminMarketplaceApi'
 import { getCalificacionStatus, toggleCalificacion as apiToggleCalificacion } from '../lib/adminCalificacionApi'
+import { getHeliosStatus, toggleHelios as apiToggleHelios } from '../lib/heliosApi'
 import { getMarketplaceStatus } from '../lib/marketplaceApi'
 import { getRegistrationStatus, setRegistrationEnabled } from '../lib/authApi'
 import { useNotification } from './NotificationContext'
@@ -18,6 +19,8 @@ interface EventGates {
   marketplaceToggling: boolean
   calificacionOpen: boolean
   calificacionToggling: boolean
+  heliosOpen: boolean
+  heliosToggling: boolean
 }
 
 interface AdminContextValue extends EventGates {
@@ -25,6 +28,8 @@ interface AdminContextValue extends EventGates {
   toggleMarketplace: () => Promise<void>
   calificacionToggling: boolean
   toggleCalificacion: () => Promise<void>
+  heliosToggling: boolean
+  toggleHelios: () => Promise<void>
   studentCount: number
   teamCount: number
   productCount: number
@@ -43,6 +48,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [marketplaceToggling, setMarketplaceToggling] = useState(false)
   const [calificacionOpen, setCalificacionOpen] = useState(false)
   const [calificacionToggling, setCalificacionToggling] = useState(false)
+  const [heliosOpen, setHeliosOpen] = useState(false)
+  const [heliosToggling, setHeliosToggling] = useState(false)
   const [studentCount, setStudentCount] = useState(0)
   const [teamCount, setTeamCount] = useState(0)
   const [productCount, setProductCount] = useState(0)
@@ -96,12 +103,22 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  const loadHeliosStatus = useCallback(async () => {
+    try {
+      const data = await getHeliosStatus()
+      setHeliosOpen(data.helios_abierto)
+    } catch {
+      // non-blocking
+    }
+  }, [])
+
   useEffect(() => {
     void loadRegistrationStatus()
     void loadMarketplaceStatus()
     void loadCalificacionStatus()
+    void loadHeliosStatus()
     void loadDashboardCounts()
-  }, [loadRegistrationStatus, loadMarketplaceStatus, loadCalificacionStatus, loadDashboardCounts])
+  }, [loadRegistrationStatus, loadMarketplaceStatus, loadCalificacionStatus, loadHeliosStatus, loadDashboardCounts])
 
   const toggleRegistro = useCallback(async () => {
     if (registroToggling || registroLoading) return
@@ -170,6 +187,19 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     }
   }, [calificacionOpen, calificacionToggling])
 
+  const handleToggleHelios = useCallback(async () => {
+    if (heliosToggling) return
+    setHeliosToggling(true)
+    try {
+      const data = await apiToggleHelios(!heliosOpen)
+      setHeliosOpen(data.helios_abierto)
+    } catch {
+      // non-blocking
+    } finally {
+      setHeliosToggling(false)
+    }
+  }, [heliosOpen, heliosToggling])
+
   const value = useMemo<AdminContextValue>(
     () => ({
       registroOpen,
@@ -181,9 +211,12 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       marketplaceToggling,
       calificacionOpen,
       calificacionToggling,
+      heliosOpen,
+      heliosToggling,
       toggleRegistro,
       toggleMarketplace: handleToggleMarketplace,
       toggleCalificacion: handleToggleCalificacion,
+      toggleHelios: handleToggleHelios,
       studentCount,
       teamCount,
       productCount,
@@ -198,9 +231,12 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       marketplaceToggling,
       calificacionOpen,
       calificacionToggling,
+      heliosOpen,
+      heliosToggling,
       toggleRegistro,
       handleToggleMarketplace,
       handleToggleCalificacion,
+      handleToggleHelios,
       studentCount,
       teamCount,
       productCount,

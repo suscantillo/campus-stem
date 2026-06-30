@@ -17,6 +17,8 @@ import {
   type EstudianteDisponible,
 } from '../../lib/heliosApi'
 import { useNotification } from '../../context/NotificationContext'
+import { useAdmin } from '../../context/AdminContext'
+import { Toggle } from '../../components/Toggle'
 
 const NOMBRES_EQUIPOS = [
   { id: 'voltios', nombre: 'Voltios', ruta: 'Ruta Solar' },
@@ -333,6 +335,21 @@ function EquiposTab() {
 
 // ── Main page ──────────────────────────────────────────────────────────────────
 
+function HeliosGateToggle() {
+  const { heliosOpen, heliosToggling, toggleHelios } = useAdmin()
+  return (
+    <div className="flex items-center justify-between rounded-2xl border border-[#e3ecf7] bg-white px-5 py-4 shadow-[0_1px_2px_rgba(1,40,84,0.04)]">
+      <div>
+        <p className="font-display text-sm font-bold text-navy">Acceso al Escape Room</p>
+        <p className="mt-0.5 text-[12px] text-muted">
+          {heliosOpen ? 'El botón de Helios es visible en la landing para los estudiantes.' : 'El Escape Room está oculto en la landing.'}
+        </p>
+      </div>
+      <Toggle checked={heliosOpen} onChange={() => void toggleHelios()} disabled={heliosToggling} />
+    </div>
+  )
+}
+
 export function AdminHeliosPage() {
   const { notify } = useNotification()
   const [tab, setTab] = useState<'progreso' | 'equipos'>('progreso')
@@ -382,6 +399,8 @@ export function AdminHeliosPage() {
 
   return (
     <div className="space-y-6">
+      <HeliosGateToggle />
+
       {/* Tab switcher */}
       <div className="flex gap-2">
         {(['progreso', 'equipos'] as const).map(t => (

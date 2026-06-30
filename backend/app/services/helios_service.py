@@ -27,6 +27,7 @@ from app.schemas.helios import (
     EstudianteDisponibleResponse,
     HeliosEquipoAdminResponse,
     HeliosEquipoMiembroResponse,
+    HeliosMiembroInfo,
     IniciarResponse,
     StationInfo,
     ValidarFinalResponse,
@@ -42,7 +43,11 @@ async def _get_helios_equipo(db: AsyncSession, equipo_id_str: str) -> HeliosEqui
         equipo_uuid = uuid.UUID(equipo_id_str)
     except ValueError:
         return None
-    result = await db.execute(select(HeliosEquipo).where(HeliosEquipo.id == equipo_uuid))
+    result = await db.execute(
+        select(HeliosEquipo)
+        .where(HeliosEquipo.id == equipo_uuid)
+        .options(selectinload(HeliosEquipo.miembros).selectinload(HeliosEquipoMiembro.usuario))
+    )
     return result.scalar_one_or_none()
 
 
@@ -86,6 +91,15 @@ def _build_progress_response(
     fragmentos = [STATIONS[sid]["keyword"] for sid in completadas if sid in STATIONS]
     es_lider = user_id is not None and equipo.lider_id == user_id
 
+    miembros = [
+        HeliosMiembroInfo(
+            usuario_id=str(m.usuario_id),
+            nombre_completo=m.usuario.nombre_completo,
+            es_lider=(m.usuario_id == equipo.lider_id),
+        )
+        for m in (equipo.miembros or [])
+    ]
+
     return EquipoProgressResponse(
         equipo_id=str(equipo.id),
         nombre=equipo_data["nombre"],
@@ -93,6 +107,7 @@ def _build_progress_response(
         ruta_nombre=ruta["nombre"],
         numero=equipo_data["numero"],
         es_lider=es_lider,
+        miembros=miembros,
         estaciones_completadas=completadas,
         fragmentos=fragmentos,
         total_estaciones=len(estaciones_ruta),
@@ -142,7 +157,11 @@ async def get_my_team(db: AsyncSession, user_id: uuid.UUID) -> EquipoProgressRes
     result = await db.execute(
         select(HeliosEquipoMiembro)
         .where(HeliosEquipoMiembro.usuario_id == user_id)
-        .options(selectinload(HeliosEquipoMiembro.equipo))
+        .options(
+            selectinload(HeliosEquipoMiembro.equipo)
+            .selectinload(HeliosEquipo.miembros)
+            .selectinload(HeliosEquipoMiembro.usuario)
+        )
     )
     miembro = result.scalar_one_or_none()
     if not miembro:

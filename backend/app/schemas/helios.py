@@ -16,6 +16,12 @@ class StationInfo(BaseModel):
     auto_completar: bool
 
 
+class HeliosMiembroInfo(BaseModel):
+    usuario_id: str
+    nombre_completo: str
+    es_lider: bool
+
+
 class EquipoProgressResponse(BaseModel):
     equipo_id: str
     nombre: str
@@ -23,6 +29,7 @@ class EquipoProgressResponse(BaseModel):
     ruta_nombre: str
     numero: int
     es_lider: bool
+    miembros: list[HeliosMiembroInfo]
     estaciones_completadas: list[str]
     fragmentos: list[str]
     total_estaciones: int
@@ -129,3 +136,11 @@ class EstudianteDisponibleResponse(BaseModel):
     id: str
     nombre_completo: str
     email: str
+
+
+class HeliosStatusResponse(BaseModel):
+    helios_abierto: bool
+
+
+class HeliosToggleRequest(BaseModel):
+    helios_abierto: bool

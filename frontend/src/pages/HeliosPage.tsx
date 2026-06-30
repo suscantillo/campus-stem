@@ -90,6 +90,89 @@ function ProgressBar({ count, total }: { count: number; total: number }) {
   )
 }
 
+// ── Phase: Team Lobby ─────────────────────────────────────────────────────────
+
+function TeamLobbyPhase({
+  equipo,
+  onContinue,
+}: {
+  equipo: EquipoProgress
+  onContinue: () => void
+}) {
+  const cursor = useBlinkCursor()
+
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#030d08] px-4 py-8">
+      <div className="w-full max-w-xl space-y-5">
+        {/* Header */}
+        <div className="text-center">
+          <p className="font-mono text-[10px] tracking-[4px] text-[#004422]">SISTEMA HELIOS — AUTENTICACIÓN CONFIRMADA</p>
+          <h1 className="mt-1 font-mono text-2xl font-bold text-[#00ff88]">
+            EQUIPO {equipo.nombre.toUpperCase()}
+          </h1>
+          <p className="font-mono text-[11px] text-[#4a7a5a]">RUTA: {equipo.ruta_nombre.toUpperCase()}</p>
+        </div>
+
+        {/* Team info box */}
+        <TerminalBox>
+          <p className="mb-3 font-mono text-[10px] tracking-[3px] text-[#4a7a5a]">
+            &gt; VERIFICANDO INTEGRANTES... <span className="text-[#00ff88]">{cursor}</span>
+          </p>
+          <div className="space-y-2">
+            {equipo.miembros.map(m => (
+              <div
+                key={m.usuario_id}
+                className="flex items-center justify-between rounded border border-[#1a3a2a] bg-[#030d08] px-3 py-2"
+              >
+                <span className="font-mono text-[13px] text-[#c8f0d8]">{m.nombre_completo}</span>
+                {m.es_lider && (
+                  <span className="rounded border border-[#00ff88]/40 bg-[#051a10] px-2 py-0.5 font-mono text-[10px] font-bold tracking-widest text-[#00ff88]">
+                    LÍDER
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </TerminalBox>
+
+        {/* Status */}
+        <TerminalBox>
+          <div className="flex items-center justify-between font-mono text-[12px]">
+            <span className="text-[#4a7a5a]">ESTADO:</span>
+            <span className="text-[#00ff88]">
+              {equipo.completado
+                ? 'COMPLETADO'
+                : equipo.iniciado_en
+                ? 'EN PROGRESO'
+                : 'PENDIENTE DE INICIO'}
+            </span>
+          </div>
+          {equipo.estaciones_completadas.length > 0 && (
+            <div className="mt-2 flex items-center justify-between font-mono text-[12px]">
+              <span className="text-[#4a7a5a]">ESTACIONES:</span>
+              <span className="text-[#ffaa00]">
+                {equipo.estaciones_completadas.length}/{equipo.total_estaciones}
+              </span>
+            </div>
+          )}
+          {!equipo.es_lider && (
+            <p className="mt-3 font-mono text-[11px] text-[#4a7a5a]">
+              Solo el líder puede iniciar el juego e ingresar respuestas.
+            </p>
+          )}
+        </TerminalBox>
+
+        <button
+          onClick={onContinue}
+          className="w-full rounded border border-[#00ff88] bg-[#050f0a] py-3.5 font-mono text-base font-bold tracking-widest text-[#00ff88] transition-all hover:bg-[#00ff88] hover:text-[#030d08]"
+        >
+          [ ACCEDER AL SISTEMA ]
+        </button>
+      </div>
+    </div>
+  )
+}
+
 // ── Phase: Intro ───────────────────────────────────────────────────────────────
 
 const INTRO_TEXT = `Si estás leyendo esto significa que mi plan funcionó.
@@ -534,21 +617,27 @@ function CompletePhase({ equipo }: { equipo: EquipoProgress }) {
 
 // ── Main page ──────────────────────────────────────────────────────────────────
 
+type GamePhase = 'lobby' | 'intro' | 'playing' | 'final_mission' | 'complete'
+
+function resolvePhase(p: EquipoProgress): Exclude<GamePhase, 'lobby'> {
+  if (p.completado) return 'complete'
+  if (!p.iniciado_en) return 'intro'
+  if (p.estacion_actual === null) return 'final_mission'
+  return 'playing'
+}
+
 export function HeliosPage() {
   const [loading, setLoading] = useState(true)
   const [sinEquipo, setSinEquipo] = useState(false)
   const [equipo, setEquipo] = useState<EquipoProgress | null>(null)
-  const [phase, setPhase] = useState<'intro' | 'playing' | 'final_mission' | 'complete'>('intro')
+  const [phase, setPhase] = useState<GamePhase>('lobby')
 
   useEffect(() => {
     void (async () => {
       try {
         const p = await getMyHeliosEquipo()
         setEquipo(p)
-        if (p.completado) setPhase('complete')
-        else if (!p.iniciado_en) setPhase('intro')
-        else if (p.estacion_actual === null) setPhase('final_mission')
-        else setPhase('playing')
+        setPhase('lobby')
       } catch (err) {
         if (err instanceof ApiError && err.status === 404) setSinEquipo(true)
       } finally { setLoading(false) }
@@ -557,10 +646,12 @@ export function HeliosPage() {
 
   function updateEquipo(p: EquipoProgress) {
     setEquipo(p)
-    if (p.completado) setPhase('complete')
-    else if (!p.iniciado_en) setPhase('intro')
-    else if (p.estacion_actual === null && !p.completado) setPhase('final_mission')
-    else setPhase('playing')
+    setPhase(resolvePhase(p))
+  }
+
+  function handleLobbyContinue() {
+    if (!equipo) return
+    setPhase(resolvePhase(equipo))
   }
 
   if (loading) return (
@@ -584,6 +675,7 @@ export function HeliosPage() {
 
   return (
     <div className="min-h-screen bg-[#030d08]" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+      {phase === 'lobby' && <TeamLobbyPhase equipo={equipo} onContinue={handleLobbyContinue} />}
       {phase === 'intro' && <IntroPhase equipo={equipo} onIniciar={updateEquipo} />}
       {phase === 'playing' && (
         <StationPhase key={equipo.estacion_actual?.id} equipo={equipo} onProgress={updateEquipo} />

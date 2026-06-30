@@ -6,6 +6,7 @@ from app.db.models.users import Usuario
 from app.schemas.helios import (
     ConfirmarBloqueGRequest,
     EquipoProgressResponse,
+    HeliosStatusResponse,
     IniciarResponse,
     ValidarFinalRequest,
     ValidarFinalResponse,
@@ -13,8 +14,16 @@ from app.schemas.helios import (
     ValidarResponse,
 )
 from app.services import helios_service
+from app.services.platform_controls_service import PlatformControlsService
 
 router = APIRouter(prefix="/helios")
+
+
+@router.get("/status", response_model=HeliosStatusResponse)
+async def get_helios_status(db: AsyncSession = Depends(get_db)):
+    svc = PlatformControlsService(db)
+    abierto = await svc.is_helios_abierto()
+    return HeliosStatusResponse(helios_abierto=abierto)
 
 
 @router.get("/mi-equipo", response_model=EquipoProgressResponse)
