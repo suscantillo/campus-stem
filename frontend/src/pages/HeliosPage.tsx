@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ApiError } from '../lib/api'
 import {
   confirmarBloqueG,
@@ -70,9 +70,6 @@ function PreText({ text }: { text: string }) {
 
 function ProgressBar({ count, total }: { count: number; total: number }) {
   const pct = total ? Math.round((count / total) * 100) : 0
-  const milestones = [10, 25, 50, 75, 100]
-  const reached = milestones.filter(m => pct >= m)
-  const next = milestones.find(m => pct < m) ?? 100
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-[11px] font-mono">
@@ -99,7 +96,6 @@ function ProgressBar({ count, total }: { count: number; total: number }) {
 // ── Phase: Lobby ───────────────────────────────────────────────────────────────
 
 function LobbyPhase({ onLogin }: { onLogin: (p: EquipoProgress) => void }) {
-  const cursor = useBlinkCursor()
   const [codigo, setCodigo] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
