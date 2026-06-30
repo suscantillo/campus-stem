@@ -345,7 +345,7 @@ function HeliosGateToggle() {
           {heliosOpen ? 'El botón de Helios es visible en la landing para los estudiantes.' : 'El Escape Room está oculto en la landing.'}
         </p>
       </div>
-      <Toggle checked={heliosOpen} onChange={() => void toggleHelios()} disabled={heliosToggling} />
+      <Toggle checked={heliosOpen} onChange={heliosToggling ? () => undefined : () => void toggleHelios()} label="Acceso al Escape Room" />
     </div>
   )
 }
