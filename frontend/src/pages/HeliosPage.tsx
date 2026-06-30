@@ -56,9 +56,6 @@ function GreenText({ children }: { children: React.ReactNode }) {
   return <span className="text-[#00ff88]">{children}</span>
 }
 
-function AmberText({ children }: { children: React.ReactNode }) {
-  return <span className="text-[#ffaa00]">{children}</span>
-}
 
 function RedText({ children }: { children: React.ReactNode }) {
   return <span className="text-[#ff4444]">{children}</span>
