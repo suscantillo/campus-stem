@@ -12,6 +12,7 @@ const baseNavItems = [
   { to: '/admin/marketplace', label: 'Marketplace', end: false },
   { to: '/admin/calificacion', label: 'Calificación', end: false },
   { to: '/admin/helios', label: 'Escape Room', end: false },
+  { to: '/admin/jueces', label: 'Jueces', end: false },
 ]
 
 const superAdminNavItems = [{ to: '/admin/usuarios', label: 'Usuarios', end: false }]
@@ -26,6 +27,7 @@ const titles: Record<string, string> = {
   '/admin/calificacion': 'Calificación',
   '/admin/helios': 'Escape Room — HELIOS',
   '/admin/usuarios': 'Usuarios privilegiados',
+  '/admin/jueces': 'Jueces',
 }
 
 export function AdminLayout() {

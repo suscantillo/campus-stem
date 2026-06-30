@@ -17,6 +17,7 @@ import { AdminMarketplacePage } from './pages/admin/AdminMarketplacePage'
 import { AdminStudentsPage } from './pages/admin/AdminStudentsPage'
 import { AdminTeamsPage } from './pages/admin/AdminTeamsPage'
 import { AdminUsersPage } from './pages/admin/AdminUsersPage'
+import { AdminJuecesPage } from './pages/admin/AdminJuecesPage'
 
 function AdminRouteShell() {
   return (
@@ -59,6 +60,7 @@ export default function App() {
                 <Route path="marketplace" element={<AdminMarketplacePage />} />
                 <Route path="calificacion" element={<AdminCalificacionPage />} />
                 <Route path="helios" element={<AdminHeliosPage />} />
+                <Route path="jueces" element={<AdminJuecesPage />} />
                 <Route
                   path="usuarios"
                   element={

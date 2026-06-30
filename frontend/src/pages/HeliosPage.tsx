@@ -616,7 +616,7 @@ export function HeliosPage() {
       {phase === 'lobby' && <LobbyPhase onLogin={handleLogin} />}
       {phase === 'intro' && equipo && <IntroPhase equipo={equipo} onIniciar={updateEquipo} />}
       {phase === 'playing' && equipo && (
-        <StationPhase equipo={equipo} onProgress={updated => updateEquipo(updated)} />
+        <StationPhase key={equipo.estacion_actual?.id} equipo={equipo} onProgress={updated => updateEquipo(updated)} />
       )}
       {phase === 'final_mission' && equipo && (
         <FinalMissionPhase equipo={equipo} onComplete={() => { void getProgress(equipo.equipo_id).then(p => { setEquipo(p); setPhase('complete') }) }} />

@@ -23,6 +23,12 @@ class CreatePrivilegedUserRequest(BaseModel):
         return value
 
 
+class UpdatePrivilegedUserRequest(BaseModel):
+    nombre_completo: str | None = Field(default=None, min_length=1, max_length=200)
+    email: EmailStr | None = None
+    password: str | None = Field(default=None, min_length=8, max_length=128)
+
+
 class PrivilegedUserResponse(BaseModel):
     id: str
     email: EmailStr
