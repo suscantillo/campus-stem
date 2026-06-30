@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { ApiError } from '../lib/api'
 import {
   confirmarBloqueG,
+  getMyHeliosEquipo,
   getProgress,
   iniciarJuego,
-  loginEquipo,
   validarFinal,
   validarRespuesta,
   type EquipoProgress,
@@ -93,84 +93,6 @@ function ProgressBar({ count, total }: { count: number; total: number }) {
   )
 }
 
-// ── Phase: Lobby ───────────────────────────────────────────────────────────────
-
-function LobbyPhase({ onLogin }: { onLogin: (p: EquipoProgress) => void }) {
-  const [codigo, setCodigo] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true); setError(null)
-    try {
-      const p = await loginEquipo(codigo.trim().toUpperCase())
-      onLogin(p)
-    } catch (err) {
-      setError(err instanceof ApiError && err.status === 404
-        ? 'CÓDIGO NO RECONOCIDO — ACCESO DENEGADO'
-        : 'ERROR DE CONEXIÓN')
-    } finally { setLoading(false) }
-  }
-
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#030d08] px-4 py-8">
-      <div className="w-full max-w-md space-y-6">
-        {/* Header */}
-        <div className="text-center">
-          <p className="mb-1 font-mono text-[10px] tracking-[4px] text-[#004422]">SISTEMA HELIOS</p>
-          <h1 className="font-mono text-3xl font-bold tracking-wider text-[#00ff88]">PROYECTO HELIOS</h1>
-          <p className="mt-1 font-mono text-[11px] tracking-[2px] text-[#ff4444]">ACCESO RESTRINGIDO</p>
-        </div>
-
-        {/* Status panel */}
-        <TerminalBox>
-          <div className="space-y-1 text-[12px]">
-            <div className="flex justify-between"><span className="text-[#4a7a5a]">GENERACIÓN SOLAR:</span> <RedText>0%</RedText></div>
-            <div className="flex justify-between"><span className="text-[#4a7a5a]">RED ELÉCTRICA:</span> <RedText>DESCONECTADA</RedText></div>
-            <div className="flex justify-between"><span className="text-[#4a7a5a]">CONTROL ELECTRÓNICO:</span> <RedText>OFFLINE</RedText></div>
-            <div className="flex justify-between"><span className="text-[#4a7a5a]">BATERÍAS:</span> <AmberText>18%</AmberText></div>
-            <div className="flex justify-between"><span className="text-[#4a7a5a]">INTEGRIDAD:</span> <RedText>12%</RedText></div>
-          </div>
-          <div className="mt-3 border-t border-[#1a3a2a] pt-3 text-center">
-            <p className="font-mono text-[11px] text-[#4a7a5a]">TRANSFERENCIA EN CURSO</p>
-            <p className="font-mono text-xl font-bold text-[#ff4444]">TIEMPO RESTANTE: 02:00:00</p>
-          </div>
-        </TerminalBox>
-
-        {/* Login form */}
-        <form onSubmit={e => void handleSubmit(e)} className="space-y-3">
-          <label className="block font-mono text-[11px] tracking-[2px] text-[#4a7a5a]">
-            IDENTIFICACIÓN DE EQUIPO
-          </label>
-          <div className="flex gap-2">
-            <input
-              value={codigo}
-              onChange={e => setCodigo(e.target.value.toUpperCase())}
-              maxLength={10}
-              className="flex-1 rounded border border-[#1a3a2a] bg-[#050f0a] px-3 py-2.5 font-mono text-sm uppercase tracking-widest text-[#00ff88] outline-none focus:border-[#00ff88] placeholder:text-[#1a3a2a]"
-              placeholder="CÓDIGO"
-              required
-              disabled={loading}
-              autoComplete="off"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="rounded border border-[#00ff88] bg-[#050f0a] px-5 py-2.5 font-mono text-sm font-bold text-[#00ff88] transition-colors hover:bg-[#00ff88] hover:text-[#030d08] disabled:opacity-50"
-            >
-              {loading ? '...' : 'ACCEDER'}
-            </button>
-          </div>
-          {error && (
-            <p className="font-mono text-[12px] text-[#ff4444]">{error}</p>
-          )}
-        </form>
-      </div>
-    </div>
-  )
-}
-
 // ── Phase: Intro ───────────────────────────────────────────────────────────────
 
 const INTRO_TEXT = `Si estás leyendo esto significa que mi plan funcionó.
@@ -234,20 +156,26 @@ function IntroPhase({
         <TerminalBox className="min-h-[240px]">
           {introLines.slice(0, lines).map((line, i) => (
             <div key={i} className={line === '' ? 'mt-1' : 'text-[#c8f0d8]'}>
-              {line || ' '}
+              {line || ' '}
             </div>
           ))}
           {lines < introLines.length && <span className="text-[#00ff88]">{cursor}</span>}
         </TerminalBox>
 
         {lines >= introLines.length && (
-          <button
-            onClick={() => void handleIniciar()}
-            disabled={loading}
-            className="w-full rounded border border-[#00ff88] bg-[#050f0a] py-3.5 font-mono text-base font-bold tracking-widest text-[#00ff88] transition-all hover:bg-[#00ff88] hover:text-[#030d08] disabled:opacity-50"
-          >
-            {loading ? 'INICIANDO...' : '[ INICIAR RECUPERACIÓN ]'}
-          </button>
+          equipo.es_lider ? (
+            <button
+              onClick={() => void handleIniciar()}
+              disabled={loading}
+              className="w-full rounded border border-[#00ff88] bg-[#050f0a] py-3.5 font-mono text-base font-bold tracking-widest text-[#00ff88] transition-all hover:bg-[#00ff88] hover:text-[#030d08] disabled:opacity-50"
+            >
+              {loading ? 'INICIANDO...' : '[ INICIAR RECUPERACIÓN ]'}
+            </button>
+          ) : (
+            <div className="rounded border border-[#1a3a2a] bg-[#050f0a] py-3.5 text-center font-mono text-[13px] text-[#4a7a5a]">
+              Solo el líder puede iniciar el juego.
+            </div>
+          )
         )}
       </div>
     </div>
@@ -268,6 +196,15 @@ function StationPhase({
   const [respuesta, setRespuesta] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [feedback, setFeedback] = useState<{ correcto: boolean; mensaje: string } | null>(null)
+
+  // Non-leader auto-refresh every 10s
+  useEffect(() => {
+    if (equipo.es_lider) return
+    const id = setInterval(() => {
+      void getProgress(equipo.equipo_id).then(updated => onProgress(updated))
+    }, 10_000)
+    return () => clearInterval(id)
+  }, [equipo.es_lider, equipo.equipo_id, onProgress])
 
   if (!station) return null
 
@@ -374,7 +311,7 @@ function StationPhase({
                 <TerminalBox>
                   <GreenText><PreText text={feedback.mensaje} /></GreenText>
                 </TerminalBox>
-              ) : (
+              ) : equipo.es_lider ? (
                 <button
                   onClick={() => void handleConfirmarBloqueG()}
                   disabled={submitting}
@@ -382,6 +319,10 @@ function StationPhase({
                 >
                   {submitting ? 'PROCESANDO...' : '[ CONFIRMAR — HE LEÍDO LOS DOCUMENTOS ]'}
                 </button>
+              ) : (
+                <div className="rounded border border-[#1a3a2a] bg-[#050f0a] py-3 text-center font-mono text-[13px] text-[#4a7a5a]">
+                  <GreenText>Esperando al líder... La respuesta la ingresa el líder del equipo.</GreenText>
+                </div>
               )}
             </div>
           ) : station.problema ? (
@@ -400,24 +341,30 @@ function StationPhase({
               )}
 
               {!feedback?.correcto && (
-                <form onSubmit={e => void handleSubmit(e)} className="flex gap-2">
-                  <input
-                    value={respuesta}
-                    onChange={e => setRespuesta(e.target.value)}
-                    className="flex-1 rounded border border-[#1a3a2a] bg-[#050f0a] px-3 py-2.5 font-mono text-sm uppercase tracking-widest text-[#00ff88] outline-none focus:border-[#00ff88] placeholder:text-[#1a3a2a]"
-                    placeholder="RESPUESTA"
-                    required
-                    disabled={submitting}
-                    autoComplete="off"
-                  />
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="rounded border border-[#00ff88] bg-[#050f0a] px-5 font-mono text-sm font-bold text-[#00ff88] hover:bg-[#00ff88] hover:text-[#030d08] disabled:opacity-50"
-                  >
-                    {submitting ? '...' : 'ENVIAR'}
-                  </button>
-                </form>
+                equipo.es_lider ? (
+                  <form onSubmit={e => void handleSubmit(e)} className="flex gap-2">
+                    <input
+                      value={respuesta}
+                      onChange={e => setRespuesta(e.target.value)}
+                      className="flex-1 rounded border border-[#1a3a2a] bg-[#050f0a] px-3 py-2.5 font-mono text-sm uppercase tracking-widest text-[#00ff88] outline-none focus:border-[#00ff88] placeholder:text-[#1a3a2a]"
+                      placeholder="RESPUESTA"
+                      required
+                      disabled={submitting}
+                      autoComplete="off"
+                    />
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="rounded border border-[#00ff88] bg-[#050f0a] px-5 font-mono text-sm font-bold text-[#00ff88] hover:bg-[#00ff88] hover:text-[#030d08] disabled:opacity-50"
+                    >
+                      {submitting ? '...' : 'ENVIAR'}
+                    </button>
+                  </form>
+                ) : (
+                  <div className="rounded border border-[#1a3a2a] bg-[#050f0a] py-3 text-center font-mono text-[13px]">
+                    <GreenText>Esperando al líder... La respuesta la ingresa el líder del equipo.</GreenText>
+                  </div>
+                )
               )}
             </div>
           ) : null}
@@ -493,24 +440,30 @@ function FinalMissionPhase({
         )}
 
         {!feedback?.correcto && (
-          <form onSubmit={e => void handleSubmit(e)} className="flex gap-2">
-            <input
-              value={respuesta}
-              onChange={e => setRespuesta(e.target.value)}
-              className="flex-1 rounded border border-[#1a3a2a] bg-[#050f0a] px-3 py-2.5 font-mono text-sm uppercase tracking-widest text-[#00ff88] outline-none focus:border-[#00ff88] placeholder:text-[#1a3a2a]"
-              placeholder="RESPUESTA FINAL"
-              required
-              disabled={submitting}
-              autoComplete="off"
-            />
-            <button
-              type="submit"
-              disabled={submitting}
-              className="rounded border border-[#00ff88] bg-[#050f0a] px-5 font-mono text-sm font-bold text-[#00ff88] hover:bg-[#00ff88] hover:text-[#030d08] disabled:opacity-50"
-            >
-              {submitting ? '...' : 'ENVIAR'}
-            </button>
-          </form>
+          equipo.es_lider ? (
+            <form onSubmit={e => void handleSubmit(e)} className="flex gap-2">
+              <input
+                value={respuesta}
+                onChange={e => setRespuesta(e.target.value)}
+                className="flex-1 rounded border border-[#1a3a2a] bg-[#050f0a] px-3 py-2.5 font-mono text-sm uppercase tracking-widest text-[#00ff88] outline-none focus:border-[#00ff88] placeholder:text-[#1a3a2a]"
+                placeholder="RESPUESTA FINAL"
+                required
+                disabled={submitting}
+                autoComplete="off"
+              />
+              <button
+                type="submit"
+                disabled={submitting}
+                className="rounded border border-[#00ff88] bg-[#050f0a] px-5 font-mono text-sm font-bold text-[#00ff88] hover:bg-[#00ff88] hover:text-[#030d08] disabled:opacity-50"
+              >
+                {submitting ? '...' : 'ENVIAR'}
+              </button>
+            </form>
+          ) : (
+            <div className="rounded border border-[#1a3a2a] bg-[#050f0a] py-3 text-center font-mono text-[13px]">
+              <GreenText>Esperando al líder... La respuesta la ingresa el líder del equipo.</GreenText>
+            </div>
+          )
         )}
       </div>
     </div>
@@ -553,7 +506,7 @@ function CompletePhase({ equipo }: { equipo: EquipoProgress }) {
         <TerminalBox className="text-left min-h-[200px]">
           {lines.slice(0, step).map((line, i) => (
             <div key={i} className={line === '' ? 'mt-1' : line.startsWith('SOY') || line.startsWith('NO FUI') || line.startsWith('FUI') ? 'font-bold text-[#00ff88]' : 'text-[#c8f0d8]'}>
-              {line || ' '}
+              {line || ' '}
             </div>
           ))}
         </TerminalBox>
@@ -584,44 +537,64 @@ function CompletePhase({ equipo }: { equipo: EquipoProgress }) {
 
 // ── Main page ──────────────────────────────────────────────────────────────────
 
-type Phase = 'lobby' | 'intro' | 'playing' | 'final_mission' | 'complete'
-
 export function HeliosPage() {
-  const [phase, setPhase] = useState<Phase>('lobby')
+  const [loading, setLoading] = useState(true)
+  const [sinEquipo, setSinEquipo] = useState(false)
   const [equipo, setEquipo] = useState<EquipoProgress | null>(null)
+  const [phase, setPhase] = useState<'intro' | 'playing' | 'final_mission' | 'complete'>('intro')
+
+  useEffect(() => {
+    void (async () => {
+      try {
+        const p = await getMyHeliosEquipo()
+        setEquipo(p)
+        if (p.completado) setPhase('complete')
+        else if (!p.iniciado_en) setPhase('intro')
+        else if (p.estacion_actual === null) setPhase('final_mission')
+        else setPhase('playing')
+      } catch (err) {
+        if (err instanceof ApiError && err.status === 404) setSinEquipo(true)
+      } finally { setLoading(false) }
+    })()
+  }, [])
 
   function updateEquipo(p: EquipoProgress) {
     setEquipo(p)
-    if (p.completado) {
-      setPhase('complete')
-    } else if (!p.iniciado_en) {
-      setPhase('intro')
-    } else if (p.estacion_actual === null && !p.completado) {
-      setPhase('final_mission')
-    } else {
-      setPhase('playing')
-    }
-  }
-
-  function handleLogin(p: EquipoProgress) {
-    setEquipo(p)
     if (p.completado) setPhase('complete')
     else if (!p.iniciado_en) setPhase('intro')
-    else if (p.estacion_actual === null) setPhase('final_mission')
+    else if (p.estacion_actual === null && !p.completado) setPhase('final_mission')
     else setPhase('playing')
   }
 
+  if (loading) return (
+    <div className="flex min-h-screen items-center justify-center bg-[#030d08]">
+      <p className="font-mono text-[#00ff88]">CARGANDO...</p>
+    </div>
+  )
+
+  if (sinEquipo) return (
+    <div className="flex min-h-screen items-center justify-center bg-[#030d08] px-4">
+      <div className="text-center space-y-4">
+        <p className="font-mono text-[10px] tracking-[4px] text-[#004422]">SISTEMA HELIOS</p>
+        <h1 className="font-mono text-2xl font-bold text-[#ff4444]">ACCESO DENEGADO</h1>
+        <p className="font-mono text-[13px] text-[#4a7a5a]">No estás asignado a ningún equipo de Helios.</p>
+        <p className="font-mono text-[11px] text-[#1a3a2a]">Contacta al administrador del evento.</p>
+      </div>
+    </div>
+  )
+
+  if (!equipo) return null
+
   return (
     <div className="min-h-screen bg-[#030d08]" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
-      {phase === 'lobby' && <LobbyPhase onLogin={handleLogin} />}
-      {phase === 'intro' && equipo && <IntroPhase equipo={equipo} onIniciar={updateEquipo} />}
-      {phase === 'playing' && equipo && (
-        <StationPhase key={equipo.estacion_actual?.id} equipo={equipo} onProgress={updated => updateEquipo(updated)} />
+      {phase === 'intro' && <IntroPhase equipo={equipo} onIniciar={updateEquipo} />}
+      {phase === 'playing' && (
+        <StationPhase key={equipo.estacion_actual?.id} equipo={equipo} onProgress={updateEquipo} />
       )}
-      {phase === 'final_mission' && equipo && (
+      {phase === 'final_mission' && (
         <FinalMissionPhase equipo={equipo} onComplete={() => { void getProgress(equipo.equipo_id).then(p => { setEquipo(p); setPhase('complete') }) }} />
       )}
-      {phase === 'complete' && equipo && <CompletePhase equipo={equipo} />}
+      {phase === 'complete' && <CompletePhase equipo={equipo} />}
     </div>
   )
 }

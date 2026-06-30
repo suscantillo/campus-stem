@@ -78,7 +78,14 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/helios" element={<HeliosPage />} />
+              <Route
+                path="/helios"
+                element={
+                  <ProtectedRoute allowedRoles={['estudiante']}>
+                    <HeliosPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </BrowserRouter>

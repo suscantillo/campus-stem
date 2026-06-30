@@ -1,6 +1,4 @@
-import { api, apiAuth } from './api'
-
-const BASE = '/helios'
+import { apiAuth } from './api'
 
 export interface StationInfo {
   id: string
@@ -16,8 +14,8 @@ export interface EquipoProgress {
   nombre: string
   ruta_id: string
   ruta_nombre: string
-  codigo: string
   numero: number
+  es_lider: boolean
   estaciones_completadas: string[]
   fragmentos: string[]
   total_estaciones: number
@@ -64,41 +62,64 @@ export interface AdminHeliosResponse {
   sin_iniciar: number
 }
 
-// ── Public API ─────────────────────────────────────────────────────────────────
+export interface HeliosEquipoMiembro {
+  usuario_id: string
+  nombre_completo: string
+  email: string
+}
 
-export function loginEquipo(codigo: string) {
-  return api<EquipoProgress>(`${BASE}/login`, {
-    method: 'POST',
-    body: JSON.stringify({ codigo }),
-  })
+export interface HeliosEquipoAdmin {
+  id: string
+  nombre: string
+  nombre_id: string
+  ruta_id: string
+  ruta_nombre: string
+  numero: number
+  lider_id: string | null
+  miembros: HeliosEquipoMiembro[]
+  iniciado: boolean
+  completado: boolean
+  porcentaje: number
+}
+
+export interface EstudianteDisponible {
+  id: string
+  nombre_completo: string
+  email: string
+}
+
+// ── Game API (all authenticated) ───────────────────────────────────────────────
+
+export function getMyHeliosEquipo() {
+  return apiAuth<EquipoProgress>('/helios/mi-equipo')
 }
 
 export function getProgress(equipo_id: string) {
-  return api<EquipoProgress>(`${BASE}/equipos/${equipo_id}`)
+  return apiAuth<EquipoProgress>('/helios/equipos/' + equipo_id)
 }
 
 export function iniciarJuego(equipo_id: string) {
-  return api<{ equipo_id: string; iniciado_en: string }>(`${BASE}/iniciar/${equipo_id}`, {
+  return apiAuth<{ equipo_id: string; iniciado_en: string }>(`/helios/iniciar/${equipo_id}`, {
     method: 'POST',
   })
 }
 
 export function validarRespuesta(equipo_id: string, station_id: string, respuesta: string) {
-  return api<ValidarResponse>(`${BASE}/validar`, {
+  return apiAuth<ValidarResponse>('/helios/validar', {
     method: 'POST',
     body: JSON.stringify({ equipo_id, station_id, respuesta }),
   })
 }
 
 export function confirmarBloqueG(equipo_id: string) {
-  return api<ValidarResponse>(`${BASE}/confirmar-bloque-g`, {
+  return apiAuth<ValidarResponse>('/helios/confirmar-bloque-g', {
     method: 'POST',
     body: JSON.stringify({ equipo_id }),
   })
 }
 
 export function validarFinal(equipo_id: string, respuesta: string) {
-  return api<ValidarFinalResponse>(`${BASE}/validar-final`, {
+  return apiAuth<ValidarFinalResponse>('/helios/validar-final', {
     method: 'POST',
     body: JSON.stringify({ equipo_id, respuesta }),
   })
@@ -116,4 +137,45 @@ export function resetEquipo(equipo_id: string) {
 
 export function resetAll() {
   return apiAuth<void>('/admin/helios/reset', { method: 'POST' })
+}
+
+// ── Admin team management ──────────────────────────────────────────────────────
+
+export function listHeliosEquipos() {
+  return apiAuth<HeliosEquipoAdmin[]>('/admin/helios/equipos')
+}
+
+export function createHeliosEquipo(nombre: string) {
+  return apiAuth<HeliosEquipoAdmin>('/admin/helios/equipos', {
+    method: 'POST',
+    body: JSON.stringify({ nombre }),
+  })
+}
+
+export function deleteHeliosEquipo(id: string) {
+  return apiAuth<void>(`/admin/helios/equipos/${id}`, { method: 'DELETE' })
+}
+
+export function addHeliosMiembro(equipoId: string, usuarioId: string) {
+  return apiAuth<void>(`/admin/helios/equipos/${equipoId}/miembros`, {
+    method: 'POST',
+    body: JSON.stringify({ usuario_id: usuarioId }),
+  })
+}
+
+export function removeHeliosMiembro(equipoId: string, usuarioId: string) {
+  return apiAuth<void>(`/admin/helios/equipos/${equipoId}/miembros/${usuarioId}`, {
+    method: 'DELETE',
+  })
+}
+
+export function setHeliosLider(equipoId: string, usuarioId: string) {
+  return apiAuth<void>(`/admin/helios/equipos/${equipoId}/lider`, {
+    method: 'PUT',
+    body: JSON.stringify({ usuario_id: usuarioId }),
+  })
+}
+
+export function getEstudiantesDisponibles() {
+  return apiAuth<EstudianteDisponible[]>('/admin/helios/estudiantes-disponibles')
 }

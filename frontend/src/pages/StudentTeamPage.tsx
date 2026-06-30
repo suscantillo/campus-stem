@@ -135,6 +135,9 @@ export function StudentTeamPage() {
         <div className="flex items-center gap-2 px-4 py-3 sm:px-6">
           <LogoLink height={28} />
           <nav className="ml-auto flex items-center gap-2 sm:gap-3">
+            <Link to="/helios" className="font-display text-[13px] font-semibold text-[#3a4868] hover:text-navy">
+              Escape Room
+            </Link>
             <Link to="/marketplace" className="font-display text-[13px] font-semibold text-[#3a4868] hover:text-navy">
               Marketplace
             </Link>

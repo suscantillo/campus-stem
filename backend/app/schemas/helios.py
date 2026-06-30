@@ -5,9 +5,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class EquipoLoginRequest(BaseModel):
-    codigo: str
-
+# ── Game schemas (student endpoints) ──────────────────────────────────────────
 
 class StationInfo(BaseModel):
     id: str
@@ -23,8 +21,8 @@ class EquipoProgressResponse(BaseModel):
     nombre: str
     ruta_id: str
     ruta_nombre: str
-    codigo: str
     numero: int
+    es_lider: bool
     estaciones_completadas: list[str]
     fragmentos: list[str]
     total_estaciones: int
@@ -69,7 +67,7 @@ class ValidarFinalResponse(BaseModel):
     mensaje: str
 
 
-# ── Admin ──────────────────────────────────────────────────────────────────────
+# ── Admin game schemas ─────────────────────────────────────────────────────────
 
 class AdminEquipoSummary(BaseModel):
     equipo_id: str
@@ -91,3 +89,43 @@ class AdminHeliosResponse(BaseModel):
     completados: int
     en_progreso: int
     sin_iniciar: int
+
+
+# ── Admin team management schemas ─────────────────────────────────────────────
+
+class HeliosEquipoMiembroResponse(BaseModel):
+    usuario_id: str
+    nombre_completo: str
+    email: str
+
+
+class HeliosEquipoAdminResponse(BaseModel):
+    id: str
+    nombre: str
+    nombre_id: str
+    ruta_id: str
+    ruta_nombre: str
+    numero: int
+    lider_id: str | None
+    miembros: list[HeliosEquipoMiembroResponse]
+    iniciado: bool
+    completado: bool
+    porcentaje: int
+
+
+class CreateHeliosEquipoRequest(BaseModel):
+    nombre: str
+
+
+class AddHeliosMiembroRequest(BaseModel):
+    usuario_id: str
+
+
+class SetHeliosLiderRequest(BaseModel):
+    usuario_id: str
+
+
+class EstudianteDisponibleResponse(BaseModel):
+    id: str
+    nombre_completo: str
+    email: str
